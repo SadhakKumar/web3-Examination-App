@@ -39,5 +39,11 @@ contract Enrollment {
         examiners[_address] = newExaminer;
     }
 
-    // function getStudentData(address addr) public {}
+    function getStudent(address add) public view returns (student memory) {
+        return students[add];
+    }
+
+    function getExaminer(address add) public view returns (examiner memory) {
+        return examiners[add];
+    }
 }
