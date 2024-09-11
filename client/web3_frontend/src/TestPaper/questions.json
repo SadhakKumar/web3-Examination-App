@@ -1,0 +1,56 @@
+{
+    "questions": [
+      {
+        "id": 1,
+        "question": "What is the capital of France?",
+        "options": ["Paris", "Berlin", "Rome", "Madrid"]
+      },
+      {
+        "id": 2,
+        "question": "Which planet is known as the Red Planet?",
+        "options": ["Earth", "Mars", "Jupiter", "Venus"]
+      },
+      {
+        "id": 3,
+        "question": "What is the largest ocean on Earth?",
+        "options": ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"]
+      },
+      {
+        "id": 4,
+        "question": "What is the chemical symbol for water?",
+        "options": ["O2", "H2O", "CO2", "NaCl"]
+      },
+      {
+        "id": 5,
+        "question": "How many continents are there on Earth?",
+        "options": ["5", "6", "7", "8"]
+      },
+      {
+        "id": 6,
+        "question": "Which is the smallest prime number?",
+        "options": ["1", "2", "3", "5"]
+      },
+      {
+        "id": 7,
+        "question": "Who wrote 'Romeo and Juliet'?",
+        "options": ["William Shakespeare", "Charles Dickens", "Mark Twain", "Jane Austen"]
+      },
+      {
+        "id": 8,
+        "question": "Which gas do plants absorb from the atmosphere?",
+        "options": ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"]
+      },
+      {
+        "id": 9,
+        "question": "What is the boiling point of water in Celsius?",
+        "options": ["50°C", "90°C", "100°C", "150°C"]
+      },
+      {
+        "id": 10,
+        "question": "Which continent is known as the 'Dark Continent'?",
+        "options": ["Asia", "Europe", "Africa", "South America"]
+      }
+    ]
+  }
+  
+
