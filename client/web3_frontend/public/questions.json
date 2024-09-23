@@ -1,0 +1,74 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the unit of electric charge?",
+      "options": ["A) Volt", "B) Coulomb", "C) Joule", "D) Ampere"]
+    },
+    {
+      "id": 2,
+      "question": "Which of the following is a scalar quantity?",
+      "options": ["A) Velocity", "B) Acceleration", "C) Force", "D) Work"]
+    },
+    {
+      "id": 3,
+      "question": "What is the value of the acceleration due to gravity on Earth?",
+      "options": ["A) 8.9 m/s²", "B) 9.8 m/s²", "C) 10.5 m/s²", "D) 12 m/s²"]
+    },
+    {
+      "id": 4,
+      "question": "Which element has the atomic number 1?",
+      "options": ["A) Helium", "B) Hydrogen", "C) Oxygen", "D) Nitrogen"]
+    },
+    {
+      "id": 5,
+      "question": "What is the chemical formula of sodium chloride?",
+      "options": ["A) NaCl", "B) Na₂O", "C) NaOH", "D) NaHCO₃"]
+    },
+    {
+      "id": 6,
+      "question": "Which law states that the current is directly proportional to voltage?",
+      "options": [
+        "A) Ohm’s Law",
+        "B) Newton’s Law",
+        "C) Kirchhoff’s Law",
+        "D) Coulomb’s Law"
+      ]
+    },
+    {
+      "id": 7,
+      "question": "What is the dimensional formula for force?",
+      "options": [
+        "A) [M L T^-1]",
+        "B) [M L T^-2]",
+        "C) [M L^2 T^-2]",
+        "D) [M L T^2]"
+      ]
+    },
+    {
+      "id": 8,
+      "question": "What is the speed of light in a vacuum?",
+      "options": [
+        "A) 2.998 x 10^8 m/s",
+        "B) 3.0 x 10^7 m/s",
+        "C) 1.5 x 10^8 m/s",
+        "D) 3.5 x 10^8 m/s"
+      ]
+    },
+    {
+      "id": 9,
+      "question": "Which of the following is an exothermic reaction?",
+      "options": [
+        "A) Photosynthesis",
+        "B) Melting of ice",
+        "C) Combustion of fuel",
+        "D) Evaporation of water"
+      ]
+    },
+    {
+      "id": 10,
+      "question": "What is the molarity of a solution that contains 1 mole of solute in 1 liter of solution?",
+      "options": ["A) 0.5 M", "B) 1 M", "C) 2 M", "D) 1.5 M"]
+    }
+  ]
+}
