@@ -8,9 +8,13 @@ import { ethers } from 'ethers';
 import { AES, enc } from 'crypto-js';
 import question from '../TestPaper/questions.json'
 import {dagJson} from '@helia/dag-json'
+import axios from "axios";
+import { pinata } from '../utils/config';
 
 
 const CreateExam = ({helia}) => {
+
+  
 
     const navigate = useNavigate();
 
@@ -139,9 +143,38 @@ const CreateExam = ({helia}) => {
     } catch (error) {
         console.error('Error getting exam:', error);
     }
- 
+
     
-};
+  };
+
+  const [jsonData, setJsonData] = useState({
+    name: "Sample Exam",
+    description: "This is a sample exam description",
+    questions: [
+      {
+        question: "What is the capital of France?",
+        options: ["Paris", "London", "Berlin", "Madrid"],
+        answer: "Paris"
+      }
+    ]
+  });
+  const uploadToIPFS = async () => {
+    const jsonBlob = new Blob([JSON.stringify(jsonData)], { type: "application/json" });
+
+      // Convert the Blob to a File to work with pinata.upload.file()
+      const jsonFile = new File([jsonBlob], "examData.json");
+
+      // Upload the JSON File to IPFS
+      const result = await pinata.upload.file(jsonFile);
+
+
+      console.log(result.IpfsHash);
+  };
+
+  const getFromIPFS = async () => {
+    const data = await pinata.gateways.get("bafkreiawosrlz5fveip7zy6h7nobfqi5gmp2ocbvs4su32uj4wcegd36pi");
+    console.log(data);
+  }
   return (
     <div>
       <h1>Create Exam</h1>
@@ -191,7 +224,7 @@ const CreateExam = ({helia}) => {
         <button onClick={addQuestion}>Add Question</button>
       </div>
 
-      <button onClick={handleSubmit}>Submit Exam</button>
+      <button onClick={getFromIPFS}>Submit Exam</button>
     </div>
   );
 };
