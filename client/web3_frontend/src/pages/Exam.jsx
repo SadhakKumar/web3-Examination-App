@@ -1,64 +1,70 @@
-import React,{useState,useEffect} from 'react'
-import { unixfs } from '@helia/unixfs'
-import { json } from '@helia/json'
-import { createHelia } from 'helia'
-import { CID } from 'multiformats/cid'
-import questions from '../TestPaper/questions.json'
-import { AES, enc } from 'crypto-js';
+import React, { useState, useEffect } from "react";
+import { AES, enc } from "crypto-js";
+import { pinata } from "../utils/config";
+import { ethers } from "ethers";
+import Examiner from "../contracts/Examiner.json";
+import { useNavigate } from "react-router-dom";
 
-const Exam = ({helia}) => {
+const Exam = () => {
+  const [exam, setExam] = useState();
+  const [contract, setContract] = useState();
+  const [exams, setExams] = useState([]);
 
-    const [exam, setExam] = useState();
-    const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const SECRET_KEY = '6c187bb65c1a4dbf9b3fc8b576a1c2dd';
-    const getExam = async () => {
-        // Prevent multiple session establishments
-        if (loading) return;
-        setLoading(true);
-        try {
-            // const helia = await createHelia();
-            const j = json(helia);
-           
-            const myImmutableAddress = 'bagaaierasords4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea';
-            const answerAddress = 'bagaaiera4hwaab6rrrng5b6gcrd64adziezyupxtcfncfs2jorn44doclmiq'
-            const cid = CID.parse(myImmutableAddress);
-    
-            let text = await j.get(cid);
-            console.log(text)
-            const decryptedTest = decryptData(text);
-            console.log(decryptedTest);
-            
-            setExam(decryptedTest);
-        } catch (error) {
-            console.error('Error getting exam:', error);
-        } finally {
-            setLoading(false);
-        }
+  useEffect(() => {
+    console.log("Create Exam Page");
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    // Create a new contract instance with the signer, allowing you to send transactions
+    let contract = new ethers.Contract(
+      "0xB934fDaa28f87a3dd6F32ccE2f1341Fa398CDc8A",
+      Examiner.abi,
+      signer
+    );
+    setContract(contract);
+  }, []);
+
+  useEffect(() => {
+    const getExams = async () => {
+      try {
+        const exams = await contract.getAllExams();
+        console.log(exams);
+        setExams(exams);
+      } catch (error) {
+        console.log("Error getting exams:", error);
+      }
     };
-    // Function to decrypt the JSON data
-    const decryptData = (encryptedData) => {
-        const decryptedData = AES.decrypt(encryptedData, SECRET_KEY).toString(enc.Utf8);
-        return JSON.parse(decryptedData);
-    };
-        
+    if (contract) getExams();
+  }, [contract]);
+
+  const handleClick = (examHash) => () => {
+    navigate(`/exam/${examHash}`);
+  };
+
   return (
-    <>
-        <button onClick={getExam}> GET EXAM</button>
-        {exam && <div>
-            {exam.questions.questions.map((question, index) => (
-                <div key={index}>
-                    <h3>{question.question}</h3>
-                    <ul>
-                        {question.options.map((option, optionIndex) => (
-                            <li key={optionIndex}>{option}</li>
-                        ))}
-                    </ul>
-                </div>
-            ))}
-        </div>}
-    </>
-  )
-}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+      <h1 className="text-4xl font-bold mb-6">All Listed Exams</h1>
+      <div className="grid grid-cols-1 gap-4 w-full max-w-lg">
+        {exams &&
+          exams.map((exam, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-md rounded-lg p-4 text-center"
+            >
+              <h2 className="text-xl font-semibold">{exam.name}</h2>
+              <button
+                onClick={handleClick(exam.examHash)}
+                className="btn btn-primary mt-2"
+              >
+                View Exam
+              </button>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+};
 
-export default Exam
+export default Exam;

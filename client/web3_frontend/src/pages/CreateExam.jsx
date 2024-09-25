@@ -1,55 +1,52 @@
-import React, { useState,useEffect } from 'react';
-import { unixfs } from '@helia/unixfs'
-import { json } from '@helia/json'
-import { createHelia } from 'helia'
-import { CID } from 'multiformats/cid'
-import { useNavigate } from 'react-router-dom';
-import { ethers } from 'ethers';
-import { AES, enc } from 'crypto-js';
-import question from '../TestPaper/questions.json'
-import {dagJson} from '@helia/dag-json'
-import axios from "axios";
-import { pinata } from '../utils/config';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ethers } from "ethers";
+import { AES, enc } from "crypto-js";
+import { pinata } from "../utils/config";
+import Examiner from "../contracts/Examiner.json";
+import ExamEnrollment from "../contracts/ExamEnrollment.json";
 
+const CreateExam = () => {
+  const navigate = useNavigate();
+  const [examinerContract, setExaminerContract] = useState();
+  const [examEnrollmentContract, setExamEnrollmentContract] = useState();
 
-const CreateExam = ({helia}) => {
+  useEffect(() => {
+    console.log("Create Exam Page");
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
 
-  
+    // Create contract instances
+    const ExaminerContract = new ethers.Contract(
+      "0xB934fDaa28f87a3dd6F32ccE2f1341Fa398CDc8A",
+      Examiner.abi,
+      signer
+    );
+    setExaminerContract(ExaminerContract);
 
-    const navigate = useNavigate();
-
-
-    const [contract, setContract] = useState();
-
-    // useEffect(() => {
-    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //     const signer = provider.getSigner();
-      
-    //     // Create a new contract instance with the signer, allowing you to send transactions
-    //     let contract = new ethers.Contract(
-    //       "0xcd5077Fb89273f8Ec8d1F14a555f88baf60579E1",
-    //       Enrollment.abi,
-    //       signer
-    //     );
-    //     setContract(contract);
-    // }, [])
-
+    const ExamEnrollmentContract = new ethers.Contract(
+      "0xE75857B5afDD9c08467E3bbfAc6a270dE38E4ad5",
+      ExamEnrollment.abi,
+      signer
+    );
+    setExamEnrollmentContract(ExamEnrollmentContract);
+  }, []);
 
   const [examDetails, setExamDetails] = useState({
-    examName: '',
-    startTime: '',
-    duration: '',
+    examName: "",
+    startTime: "",
+    duration: "",
   });
 
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
 
   const [currentQuestion, setCurrentQuestion] = useState({
-    question: '',
-    options: ['', '', '', ''],
+    question: "",
+    options: ["", "", "", ""],
   });
 
-  const [currentAnswer, setCurrentAnswer] = useState('');
+  const [currentAnswer, setCurrentAnswer] = useState("");
 
   const handleExamDetailChange = (e) => {
     setExamDetails({
@@ -81,150 +78,178 @@ const CreateExam = ({helia}) => {
   const addQuestion = () => {
     setQuestions([...questions, currentQuestion]);
     setAnswers({ ...answers, [questions.length]: currentAnswer });
-    setCurrentQuestion({ question: '', options: ['', '', '', ''] });
-    setCurrentAnswer('');
+    setCurrentQuestion({ question: "", options: ["", "", "", ""] });
+    setCurrentAnswer("");
   };
 
   const handleSubmit = () => {
-    console.log('Exam Details: ', examDetails);
-    console.log('Questions: ', questions);
-    console.log('Answers: ', answers);
+    console.log("Exam Details: ", examDetails);
+    console.log("Questions: ", questions);
+    console.log("Answers: ", answers);
 
-    UploadExam();
+    uploadToIPFS();
     // Logic to handle submitting the exam
   };
 
-  const SECRET_KEY = '6c187bb65c1a4dbf9b3fc8b576a1c2dd';
+  const SECRET_KEY = "6c187bb65c1a4dbf9b3fc8b576a1c2dd";
 
-  const updateSmartContract = async () => {
-    console.log("yop")
-    }
-  const UploadExam = async () => {
-    try {
-        // const helia = await createHelia();
-        const j = dagJson(helia);
-
-        // Encrypt the questions and answers JSON using AES encryption
-        // const encryptedQuestions = AES.encrypt(JSON.stringify(questions), SECRET_KEY).toString();
-        // const encryptedAnswers = AES.encrypt(JSON.stringify(answers), SECRET_KEY).toString();
-
-        // Add encrypted questions and answers to IPFS
-        const myImmutableAddressForQuestions = await j.add(
-          { "hello": "world121" }
-        );
-        console.log('Added encrypted questions to IPFS:', myImmutableAddressForQuestions.toString());
-
-        const myImmutableAddressForAnswers = await j.add({ "hello": "world" });
-        // console.log('Added encrypted answers to IPFS:', myImmutableAddressForAnswers.toString());
-
-
-        // await helia.pins.add(myImmutableAddressForQuestions);
-        // await helia.pins.add(myImmutableAddressForAnswers);
-
-        // Retrieve CID
-        const cid = CID.parse(myImmutableAddressForQuestions.toString());
-        console.log(cid);
-
-        // Get the data back from IPFS
-        // let encryptedData = await j.get(cid);
-        // console.log('Encrypted data:', encryptedData);
-
-        // Decrypt the questions for testing purposes
-        // let decryptedQuestions = AES.decrypt(encryptedData.encryptedQuestions, SECRET_KEY).toString(enc.Utf8);
-        // console.log('Decrypted questions:', decryptedQuestions);
-
-        // Stop Helia
-        // helia.stop();
-
-        // Update the smart contract or navigate
-        // updateSmartContract();
-        navigate('/examiner');
-
-    } catch (error) {
-        console.error('Error getting exam:', error);
-    }
-
-    
-  };
-
-  const [jsonData, setJsonData] = useState({
-    name: "Sample Exam",
-    description: "This is a sample exam description",
-    questions: [
-      {
-        question: "What is the capital of France?",
-        options: ["Paris", "London", "Berlin", "Madrid"],
-        answer: "Paris"
-      }
-    ]
-  });
   const uploadToIPFS = async () => {
-    const jsonBlob = new Blob([JSON.stringify(jsonData)], { type: "application/json" });
+    let questioncid = "";
+    let answercid = "";
+    let hash = "";
+    try {
+      const combinedString = JSON.stringify({
+        examDetails,
+        questions,
+        answers,
+      });
 
-      // Convert the Blob to a File to work with pinata.upload.file()
-      const jsonFile = new File([jsonBlob], "examData.json");
+      // Hash the combined string using SHA-256
+      const encoder = new TextEncoder();
+      const data = encoder.encode(combinedString);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      hash = hashHex;
+      console.log("Hash:", hash);
 
-      // Upload the JSON File to IPFS
-      const result = await pinata.upload.file(jsonFile);
+      const encryptedQuestions = AES.encrypt(
+        JSON.stringify(questions),
+        SECRET_KEY
+      ).toString();
+      const encryptedAnswers = AES.encrypt(
+        JSON.stringify(answers),
+        SECRET_KEY
+      ).toString();
 
+      const jsonQuestionBlob = new Blob([JSON.stringify(encryptedQuestions)], {
+        type: "application/json",
+      });
+      const jsonAnswerBlob = new Blob([JSON.stringify(encryptedAnswers)], {
+        type: "application/json",
+      });
 
-      console.log(result.IpfsHash);
+      const jsonFile = new File([jsonQuestionBlob], "examData.json");
+      const jsonAnswerFile = new File([jsonAnswerBlob], "answerData.json");
+
+      // Upload to IPFS
+      const uploadQuestionResult = await pinata.upload.file(jsonFile);
+      questioncid = uploadQuestionResult.IpfsHash;
+      const uploadAnswerResult = await pinata.upload.file(jsonAnswerFile);
+      answercid = uploadAnswerResult.IpfsHash;
+
+      console.log(uploadQuestionResult.IpfsHash);
+      console.log(uploadAnswerResult.IpfsHash);
+    } catch (error) {
+      alert("Error uploading to IPFS:", error);
+      console.log("Error uploading to IPFS:", error);
+    }
+
+    try {
+      await examinerContract.createExam(
+        hash,
+        questioncid,
+        answercid,
+        examDetails.startTime,
+        examDetails.startTime,
+        examDetails.duration,
+        examDetails.examName
+      );
+      console.log("Exam created successfully!");
+
+      await examEnrollmentContract.createExam(hash);
+    } catch (error) {
+      alert("Error creating exam:", error);
+      console.error("Error creating exam:", error);
+    }
+
+    navigate("/examiner");
   };
 
-  const getFromIPFS = async () => {
-    const data = await pinata.gateways.get("bafkreiawosrlz5fveip7zy6h7nobfqi5gmp2ocbvs4su32uj4wcegd36pi");
-    console.log(data);
-  }
   return (
-    <div>
-      <h1>Create Exam</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+      <h1 className="text-2xl font-bold mb-6">Create Exam</h1>
 
       {/* Exam Details Input */}
-      <div>
-        <label>
+      <div className="mb-6">
+        <label className="block mb-2">
           Exam Name:
-          <input type="text" name="examName" value={examDetails.examName} onChange={handleExamDetailChange} />
+          <input
+            type="text"
+            name="examName"
+            value={examDetails.examName}
+            onChange={handleExamDetailChange}
+            className="input input-bordered w-full mt-1"
+          />
         </label>
-        <label>
+        <label className="block mb-2">
           Start Time:
-          <input type="datetime-local" name="startTime" value={examDetails.startTime} onChange={handleExamDetailChange} />
+          <input
+            type="datetime-local"
+            name="startTime"
+            value={examDetails.startTime}
+            onChange={handleExamDetailChange}
+            className="input input-bordered w-full mt-1"
+          />
         </label>
-        <label>
+        <label className="block mb-2">
           Duration (minutes):
-          <input type="number" name="duration" value={examDetails.duration} onChange={handleExamDetailChange} />
+          <input
+            type="number"
+            name="duration"
+            value={examDetails.duration}
+            onChange={handleExamDetailChange}
+            className="input input-bordered w-full mt-1"
+          />
         </label>
       </div>
 
-      {/* <button onClick={addQuestion}>Next: Add Questions</button> */}
-
       {/* Question Input */}
-      <div>
-        <h2>Add Question</h2>
-        <label>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-4">Add Question</h2>
+        <label className="block mb-2">
           Question:
-          <input type="text" name="question" value={currentQuestion.question} onChange={handleQuestionChange} />
+          <input
+            type="text"
+            name="question"
+            value={currentQuestion.question}
+            onChange={handleQuestionChange}
+            className="input input-bordered w-full mt-1"
+          />
         </label>
 
         {currentQuestion.options.map((option, index) => (
-          <label key={index}>
+          <label key={index} className="block mb-2">
             Option {index + 1}:
             <input
               type="text"
               value={option}
               onChange={(e) => handleOptionChange(index, e)}
+              className="input input-bordered w-full mt-1"
             />
           </label>
         ))}
 
-        <label>
+        <label className="block mb-2">
           Answer:
-          <input type="text" value={currentAnswer} onChange={handleAnswerChange} />
+          <input
+            type="text"
+            value={currentAnswer}
+            onChange={handleAnswerChange}
+            className="input input-bordered w-full mt-1"
+          />
         </label>
 
-        <button onClick={addQuestion}>Add Question</button>
+        <button onClick={addQuestion} className="btn btn-secondary mt-4">
+          Add Question
+        </button>
       </div>
 
-      <button onClick={getFromIPFS}>Submit Exam</button>
+      <button onClick={handleSubmit} className="btn btn-primary">
+        Submit Exam
+      </button>
     </div>
   );
 };
