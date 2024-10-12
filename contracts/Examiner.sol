@@ -11,9 +11,6 @@ contract Examiner {
     string duration;
     string name;
   }
-  
-  
-
 
   struct examReturn{
     string questions;

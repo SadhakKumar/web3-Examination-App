@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Enrollment from "../contracts/Enrollment.json";
 import { useNavigate } from "react-router-dom";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
 
 function HomePage() {
   const [account, setAccount] = useState();
   const [contract, setContract] = useState();
   const navigate = useNavigate();
+  const { isConnected, address } = useAccount();
 
   useEffect(() => {
     const account = localStorage.getItem("account");
@@ -19,39 +22,21 @@ function HomePage() {
 
     // Create a new contract instance with the signer
     const contract = new ethers.Contract(
-      "0x3E07df655bef52BBe69B9591AfeC13225e33D3e0",
+      process.env.REACT_APP_ENROLLMENT_CONTRACT_ADDRESS,
       Enrollment.abi,
       signer
     );
     setContract(contract);
   }, []);
 
-  const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setAccount(accounts[0]);
-        localStorage.setItem("account", accounts[0]);
-      } catch (error) {
-        console.error("Error connecting to MetaMask:", error);
-      }
-    } else {
-      alert(
-        "MetaMask is not installed. Please install MetaMask and try again."
-      );
-    }
-  };
-
   const getRole = async () => {
     try {
-      const student = await contract.getStudent(account);
+      const student = await contract.getStudent(address);
       if (student.name !== "") {
         navigate("/student");
         return;
       }
-      const examiner = await contract.getExaminer(account);
+      const examiner = await contract.getExaminer(address);
 
       if (examiner.name !== "") {
         navigate("/examiner");
@@ -63,58 +48,23 @@ function HomePage() {
     }
   };
 
-  const enrollAsStudent = async () => {
-    if (window.ethereum) {
-      try {
-        await contract.enrollStudent("vinesh", "20", "51");
-        console.log("Enrollment successful!");
-      } catch (error) {
-        console.error("Error enrolling student:", error);
-      }
-    } else {
-      alert(
-        "MetaMask is not installed. Please install MetaMask and try again."
-      );
-    }
-  };
-
-  const enrollExaminer = async () => {
-    if (window.ethereum) {
-      try {
-        await contract.enrollExaminer("vinesh", "20", "JEE");
-        console.log("Enrollment successful!");
-      } catch (error) {
-        console.error("Error enrolling examiner:", error);
-      }
-    } else {
-      alert(
-        "MetaMask is not installed. Please install MetaMask and try again."
-      );
-    }
-  };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-md rounded-lg p-8 w-96">
         <h1 className="text-2xl font-bold text-center mb-6">
           Connect to MetaMask
         </h1>
-        {!account ? (
-          <button
-            onClick={connectWallet}
-            className="btn btn-primary w-full mb-4"
-          >
-            Connect
-          </button>
+        {!isConnected ? (
+          <ConnectButton />
         ) : (
           <div>
             <p className="text-lg">Connected Account:</p>
-            <p className="font-semibold text-lg">{account}</p>
+            <p className="font-semibold text-lg">{address}</p>
             <button onClick={getRole} className="btn btn-secondary w-full mb-4">
               Check Role
             </button>
             <div className="text-center">
-              {contract && account && (
+              {contract && address && (
                 <>
                   <p className="text-lg">
                     {getRole() === 1
@@ -123,14 +73,6 @@ function HomePage() {
                       ? "Role: Examiner"
                       : ""}
                   </p>
-                  {getRole() !== 1 && getRole() !== 2 && (
-                    <button
-                      onClick={enrollAsStudent}
-                      className="btn btn-accent w-full"
-                    >
-                      Enroll as Student
-                    </button>
-                  )}
                 </>
               )}
             </div>
