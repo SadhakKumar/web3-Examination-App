@@ -13,7 +13,7 @@ const OnBoarding = () => {
 
     // Create a new contract instance with the signer, allowing you to send transactions
     const contractInstance = new ethers.Contract(
-      "0xcd5077Fb89273f8Ec8d1F14a555f88baf60579E1",
+      process.env.REACT_APP_ENROLLMENT_CONTRACT_ADDRESS,
       Enrollment.abi,
       signer
     );
@@ -23,7 +23,8 @@ const OnBoarding = () => {
   const enrollAsStudent = async () => {
     if (window.ethereum) {
       try {
-        await contract.enrollStudent("sadiya", "20", "51");
+        const tx = await contract.enrollStudent("sadiya", "20", "51");
+        await tx.wait();
         console.log("Enrollment successful!");
         navigate("/");
       } catch (error) {
@@ -39,7 +40,8 @@ const OnBoarding = () => {
   const enrollExaminer = async () => {
     if (window.ethereum) {
       try {
-        await contract.enrollExaminer("vineah", "20", "JEE");
+        const tx = await contract.enrollExaminer("vineah", "20", "JEE");
+        await tx.wait();
         console.log("Enrollment successful!");
         navigate("/");
       } catch (error) {

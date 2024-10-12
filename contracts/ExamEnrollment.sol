@@ -31,7 +31,7 @@ contract ExamEnrollment {
     }
 
     function createExam(string memory examHash) public {
-        examEnrollments[examHash][msg.sender] = true;
+        examEnrollments[examHash][msg.sender] = true; // examiner access given
     }
 
     

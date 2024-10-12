@@ -21,14 +21,14 @@ const Test = () => {
     const signer = provider.getSigner();
 
     const contractInstance = new ethers.Contract(
-      "0xE75857B5afDD9c08467E3bbfAc6a270dE38E4ad5",
+      process.env.REACT_APP_EXAM_ENROLLMENT_CONTRACT_ADDRESS,
       ExamEnrollment.abi,
       signer
     );
     setContract(contractInstance);
 
     const examinerContractInstance = new ethers.Contract(
-      "0xB934fDaa28f87a3dd6F32ccE2f1341Fa398CDc8A",
+      process.env.REACT_APP_EXAMINER_CONTRACT_ADDRESS,
       Examiner.abi,
       signer
     );
