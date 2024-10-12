@@ -13,7 +13,7 @@ const OnBoarding = () => {
 
     // Create a new contract instance with the signer, allowing you to send transactions
     const contractInstance = new ethers.Contract(
-      "0xcd5077Fb89273f8Ec8d1F14a555f88baf60579E1",
+      "0x3E07df655bef52BBe69B9591AfeC13225e33D3e0",
       Enrollment.abi,
       signer
     );
@@ -52,6 +52,10 @@ const OnBoarding = () => {
     }
   };
 
+    const nextTick = async () => {
+      navigate('/');
+    };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
       <h1 className="text-2xl font-bold mb-6">OnBoarding</h1>
@@ -67,6 +71,12 @@ const OnBoarding = () => {
           className="btn btn-secondary w-full max-w-xs"
         >
           Enroll as an Examiner
+        </button>
+        <button
+          onClick={nextTick}
+          className="btn btn-accent w-full max-w-xs"
+        >
+          Go to Home
         </button>
       </div>
     </div>

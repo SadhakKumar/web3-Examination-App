@@ -19,7 +19,7 @@ function HomePage() {
 
     // Create a new contract instance with the signer
     const contract = new ethers.Contract(
-      "0xcd5077Fb89273f8Ec8d1F14a555f88baf60579E1",
+      "0x3E07df655bef52BBe69B9591AfeC13225e33D3e0",
       Enrollment.abi,
       signer
     );
