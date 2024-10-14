@@ -54,6 +54,10 @@ const OnBoarding = () => {
     }
   };
 
+    const nextTick = async () => {
+      navigate('/');
+    };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
       <h1 className="text-2xl font-bold mb-6">OnBoarding</h1>
@@ -69,6 +73,12 @@ const OnBoarding = () => {
           className="btn btn-secondary w-full max-w-xs"
         >
           Enroll as an Examiner
+        </button>
+        <button
+          onClick={nextTick}
+          className="btn btn-accent w-full max-w-xs"
+        >
+          Go to Home
         </button>
       </div>
     </div>
