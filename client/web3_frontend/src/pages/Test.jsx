@@ -40,6 +40,7 @@ const Test = () => {
       if (!examinerContract) return;
       try {
         const exams = await examinerContract.getExam(id);
+
         setExam(exams);
       } catch (error) {
         console.log("Error getting exams:", error);
@@ -90,6 +91,7 @@ const Test = () => {
       const data = encryptedData.data.replace(/^"|"$/g, "");
       const decryptedBytes = AES.decrypt(data, SECRET_KEY);
       const decryptedQuestions = decryptedBytes.toString(enc.Utf8);
+      console.log(JSON.parse(decryptedQuestions));
       setTestPaper(JSON.parse(decryptedQuestions));
     } catch (error) {
       console.log("Error getting from IPFS:", error);
@@ -121,7 +123,7 @@ const Test = () => {
                 >
                   Start Exam
                 </button>
-                {loading ? (
+                {loading && !testPaper ? (
                   <p className="text-lg">Loading test paper...</p>
                 ) : (
                   <div>
@@ -134,19 +136,21 @@ const Test = () => {
                           {question.question}
                         </h3>
                         <ul className="mt-2">
-                          {question.options.map((option, optionIndex) => (
-                            <li key={optionIndex} className="mt-2">
-                              <label className="flex items-center">
-                                <input
-                                  type="radio"
-                                  name={`question-${index}`} // Group radio buttons by question
-                                  value={option}
-                                  className="form-radio text-blue-600 h-5 w-5"
-                                />
-                                <span className="ml-2">{option}</span>
-                              </label>
-                            </li>
-                          ))}
+                          {JSON.parse(question.options.replace(/'/g, '"')).map(
+                            (option, optionIndex) => (
+                              <li key={optionIndex} className="mt-2">
+                                <label className="flex items-center">
+                                  <input
+                                    type="radio"
+                                    name={`question-${index}`} // Group radio buttons by question
+                                    value={option}
+                                    className="form-radio text-blue-600 h-5 w-5"
+                                  />
+                                  <span className="ml-2">{option}</span>
+                                </label>
+                              </li>
+                            )
+                          )}
                         </ul>
                       </div>
                     ))}

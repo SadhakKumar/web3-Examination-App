@@ -5,11 +5,14 @@ import { AES, enc } from "crypto-js";
 import { pinata } from "../utils/config";
 import Examiner from "../contracts/Examiner.json";
 import ExamEnrollment from "../contracts/ExamEnrollment.json";
+import Papa from "papaparse";
 
 const CreateExam = () => {
   const navigate = useNavigate();
   const [examinerContract, setExaminerContract] = useState();
   const [examEnrollmentContract, setExamEnrollmentContract] = useState();
+  const [jsonResultQuestions, setJsonResultQuestions] = useState(null);
+  const [jsonResultAnswers, setJsonResultAnswers] = useState(null);
 
   useEffect(() => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -37,16 +40,6 @@ const CreateExam = () => {
     duration: "",
   });
 
-  const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState({});
-
-  const [currentQuestion, setCurrentQuestion] = useState({
-    question: "",
-    options: ["", "", "", ""],
-  });
-
-  const [currentAnswer, setCurrentAnswer] = useState("");
-
   const handleExamDetailChange = (e) => {
     setExamDetails({
       ...examDetails,
@@ -54,40 +47,32 @@ const CreateExam = () => {
     });
   };
 
-  const handleQuestionChange = (e) => {
-    setCurrentQuestion({
-      ...currentQuestion,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleOptionChange = (index, e) => {
-    const newOptions = [...currentQuestion.options];
-    newOptions[index] = e.target.value;
-    setCurrentQuestion({
-      ...currentQuestion,
-      options: newOptions,
-    });
-  };
-
-  const handleAnswerChange = (e) => {
-    setCurrentAnswer(e.target.value);
-  };
-
-  const addQuestion = () => {
-    setQuestions([...questions, currentQuestion]);
-    setAnswers({ ...answers, [questions.length]: currentAnswer });
-    setCurrentQuestion({ question: "", options: ["", "", "", ""] });
-    setCurrentAnswer("");
-  };
-
   const handleSubmit = () => {
     console.log("Exam Details: ", examDetails);
-    console.log("Questions: ", questions);
-    console.log("Answers: ", answers);
+    console.log("Questions: ", jsonResultQuestions);
+    console.log("Answers: ", jsonResultAnswers);
 
     uploadToIPFS();
     // Logic to handle submitting the exam
+  };
+
+  const handleFileUpload = (e, value) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Use PapaParse to parse the CSV file
+      Papa.parse(file, {
+        header: true, // to treat first row as header
+        skipEmptyLines: true,
+        complete: (result) => {
+          if (value == "questions") {
+            setJsonResultQuestions(result.data);
+          } else {
+            setJsonResultAnswers(result.data);
+          }
+          // Set the parsed data as JSON
+        },
+      });
+    }
   };
 
   const SECRET_KEY = "6c187bb65c1a4dbf9b3fc8b576a1c2dd";
@@ -99,8 +84,8 @@ const CreateExam = () => {
     try {
       const combinedString = JSON.stringify({
         examDetails,
-        questions,
-        answers,
+        jsonResultQuestions,
+        jsonResultAnswers,
       });
 
       // Hash the combined string using SHA-256
@@ -115,11 +100,11 @@ const CreateExam = () => {
       console.log("Hash:", hash);
 
       const encryptedQuestions = AES.encrypt(
-        JSON.stringify(questions),
+        JSON.stringify(jsonResultQuestions),
         SECRET_KEY
       ).toString();
       const encryptedAnswers = AES.encrypt(
-        JSON.stringify(answers),
+        JSON.stringify(jsonResultAnswers),
         SECRET_KEY
       ).toString();
 
@@ -205,45 +190,31 @@ const CreateExam = () => {
         </label>
       </div>
 
-      {/* Question Input */}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">Add Question</h2>
-        <label className="block mb-2">
-          Question:
-          <input
-            type="text"
-            name="question"
-            value={currentQuestion.question}
-            onChange={handleQuestionChange}
-            className="input input-bordered w-full mt-1"
-          />
-        </label>
+      <div>
+        <h2>Upload Questions csv file</h2>
+        <input
+          type="file"
+          accept=".csv"
+          onChange={(e) => handleFileUpload(e, "questions")}
+        />
 
-        {currentQuestion.options.map((option, index) => (
-          <label key={index} className="block mb-2">
-            Option {index + 1}:
-            <input
-              type="text"
-              value={option}
-              onChange={(e) => handleOptionChange(index, e)}
-              className="input input-bordered w-full mt-1"
-            />
-          </label>
-        ))}
+        {/* Show JSON result */}
+        {jsonResultQuestions && (
+          <pre>{JSON.stringify(jsonResultQuestions, null, 2)}</pre>
+        )}
+      </div>
+      <div>
+        <h2>Upload Answers csv file</h2>
+        <input
+          type="file"
+          accept=".csv"
+          onChange={(e) => handleFileUpload(e, "answers")}
+        />
 
-        <label className="block mb-2">
-          Answer:
-          <input
-            type="text"
-            value={currentAnswer}
-            onChange={handleAnswerChange}
-            className="input input-bordered w-full mt-1"
-          />
-        </label>
-
-        <button onClick={addQuestion} className="btn btn-secondary mt-4">
-          Add Question
-        </button>
+        {/* Show JSON result */}
+        {jsonResultAnswers && (
+          <pre>{JSON.stringify(jsonResultAnswers, null, 2)}</pre>
+        )}
       </div>
 
       <button onClick={handleSubmit} className="btn btn-primary">
