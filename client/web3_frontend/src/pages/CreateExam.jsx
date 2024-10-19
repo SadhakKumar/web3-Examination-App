@@ -18,7 +18,6 @@ const CreateExam = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
-    // Create contract instances
     const ExaminerContract = new ethers.Contract(
       process.env.REACT_APP_EXAMINER_CONTRACT_ADDRESS,
       Examiner.abi,
@@ -53,23 +52,20 @@ const CreateExam = () => {
     console.log("Answers: ", jsonResultAnswers);
 
     uploadToIPFS();
-    // Logic to handle submitting the exam
   };
 
   const handleFileUpload = (e, value) => {
     const file = e.target.files[0];
     if (file) {
-      // Use PapaParse to parse the CSV file
       Papa.parse(file, {
-        header: true, // to treat first row as header
+        header: true,
         skipEmptyLines: true,
         complete: (result) => {
-          if (value == "questions") {
+          if (value === "questions") {
             setJsonResultQuestions(result.data);
           } else {
             setJsonResultAnswers(result.data);
           }
-          // Set the parsed data as JSON
         },
       });
     }
@@ -88,7 +84,6 @@ const CreateExam = () => {
         jsonResultAnswers,
       });
 
-      // Hash the combined string using SHA-256
       const encoder = new TextEncoder();
       const data = encoder.encode(combinedString);
       const hashBuffer = await crypto.subtle.digest("SHA-256", data);
@@ -118,7 +113,6 @@ const CreateExam = () => {
       const jsonFile = new File([jsonQuestionBlob], "examData.json");
       const jsonAnswerFile = new File([jsonAnswerBlob], "answerData.json");
 
-      // Upload to IPFS
       const uploadQuestionResult = await pinata.upload.file(jsonFile);
       questioncid = uploadQuestionResult.IpfsHash;
       const uploadAnswerResult = await pinata.upload.file(jsonAnswerFile);
@@ -153,73 +147,89 @@ const CreateExam = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">Create Exam</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-customYellow3 p-6">
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-3xl w-full">
+        <h1 className="text-3xl font-bold mb-6 text-customYellow2 text-center">
+          Create Exam
+        </h1>
 
-      {/* Exam Details Input */}
-      <div className="mb-6">
-        <label className="block mb-2">
-          Exam Name:
-          <input
-            type="text"
-            name="examName"
-            value={examDetails.examName}
-            onChange={handleExamDetailChange}
-            className="input input-bordered w-full mt-1"
-          />
-        </label>
-        <label className="block mb-2">
-          Start Time:
-          <input
-            type="datetime-local"
-            name="startTime"
-            value={examDetails.startTime}
-            onChange={handleExamDetailChange}
-            className="input input-bordered w-full mt-1"
-          />
-        </label>
-        <label className="block mb-2">
-          Duration (minutes):
-          <input
-            type="number"
-            name="duration"
-            value={examDetails.duration}
-            onChange={handleExamDetailChange}
-            className="input input-bordered w-full mt-1"
-          />
-        </label>
+        {/* Exam Details Input */}
+        <div className="mb-6 space-y-4">
+          <label className="block text-lg text-gray-700 font-semibold">
+            Exam Name:
+            <input
+              type="text"
+              name="examName"
+              value={examDetails.examName}
+              onChange={handleExamDetailChange}
+              className="input input-bordered w-full mt-2 p-3 border-gray-300 rounded-lg"
+            />
+          </label>
+          <label className="block text-lg text-gray-700 font-semibold">
+            Start Time:
+            <input
+              type="datetime-local"
+              name="startTime"
+              value={examDetails.startTime}
+              onChange={handleExamDetailChange}
+              className="input input-bordered w-full mt-2 p-3 border-gray-300 rounded-lg"
+            />
+          </label>
+          <label className="block text-lg text-gray-700 font-semibold">
+            Duration (minutes):
+            <input
+              type="number"
+              name="duration"
+              value={examDetails.duration}
+              onChange={handleExamDetailChange}
+              className="input input-bordered w-full mt-2 p-3 border-gray-300 rounded-lg"
+            />
+          </label>
+        </div>
+
+        {/* File Upload Section */}
+        <div className="mb-6">
+          <h2 className="text-lg font-bold mb-4 text-gray-700">Upload CSV Files</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-gray-600 mb-2">Questions CSV</h3>
+              <input
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleFileUpload(e, "questions")}
+                className="input input-bordered w-full p-3 border-gray-300 rounded-lg"
+              />
+              {jsonResultQuestions && (
+                <pre className="bg-gray-100 p-4 mt-4 rounded-lg text-sm">
+                  {JSON.stringify(jsonResultQuestions, null, 2)}
+                </pre>
+              )}
+            </div>
+            <div>
+              <h3 className="text-gray-600 mb-2">Answers CSV</h3>
+              <input
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleFileUpload(e, "answers")}
+                className="input input-bordered w-full p-3 border-gray-300 rounded-lg"
+              />
+              {jsonResultAnswers && (
+                <pre className="bg-gray-100 p-4 mt-4 rounded-lg text-sm">
+                  {JSON.stringify(jsonResultAnswers, null, 2)}
+                </pre>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          onClick={handleSubmit}
+          className="bg-customYellow2 text-white font-bold py-3 px-6 rounded-lg shadow-md w-full hover:bg-customYellow transition-transform transform hover:scale-105"
+        >
+          Submit Exam
+        </button>
       </div>
-
-      <div>
-        <h2>Upload Questions csv file</h2>
-        <input
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleFileUpload(e, "questions")}
-        />
-
-        {/* Show JSON result */}
-        {jsonResultQuestions && (
-          <pre>{JSON.stringify(jsonResultQuestions, null, 2)}</pre>
-        )}
-      </div>
-      <div>
-        <h2>Upload Answers csv file</h2>
-        <input
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleFileUpload(e, "answers")}
-        />
-
-        {/* Show JSON result */}
-        {jsonResultAnswers && (
-          <pre>{JSON.stringify(jsonResultAnswers, null, 2)}</pre>
-        )}
-      </div>
-
-      <button onClick={handleSubmit} className="btn btn-primary">
-        Submit Exam
-      </button>
     </div>
   );
 };
