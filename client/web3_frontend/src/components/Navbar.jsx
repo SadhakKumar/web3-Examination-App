@@ -1,11 +1,21 @@
 import React from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import logo from "./meta.png";
 
 const Navbar = () => {
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-customYellow2 shadow-md">
       <div className="navbar-start">
+        <div className="flex items-center">
+          {/* Logo */}
+          <img
+            src={logo}
+            alt="Logo"
+            className="h-11 w-11 rounded-full mr-2" // Adjust size as needed
+          />
+          <a className="btn btn-ghost font-extrabold text-white text-2xl">Web3 Exam</a>
+        </div>
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg
@@ -24,10 +34,8 @@ const Navbar = () => {
             </svg>
           </div>
         </div>
-        <a className="btn btn-ghost text-xl">Web3 Exam</a>
       </div>
       <div className="navbar-center hidden lg:flex"></div>
-
       <div className="navbar-end">
         <ConnectButton />
       </div>
