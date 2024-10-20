@@ -11,7 +11,6 @@ const OnBoarding = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
-    // Create a new contract instance with the signer, allowing you to send transactions
     const contractInstance = new ethers.Contract(
       process.env.REACT_APP_ENROLLMENT_CONTRACT_ADDRESS,
       Enrollment.abi,
@@ -31,9 +30,7 @@ const OnBoarding = () => {
         console.error("Error enrolling student:", error);
       }
     } else {
-      alert(
-        "MetaMask is not installed. Please install MetaMask and try again."
-      );
+      alert("MetaMask is not installed. Please install MetaMask and try again.");
     }
   };
 
@@ -48,38 +45,40 @@ const OnBoarding = () => {
         console.error("Error enrolling examiner:", error);
       }
     } else {
-      alert(
-        "MetaMask is not installed. Please install MetaMask and try again."
-      );
+      alert("MetaMask is not installed. Please install MetaMask and try again.");
     }
   };
 
-    const nextTick = async () => {
-      navigate('/');
-    };
+  const nextTick = () => {
+    navigate('/');
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">OnBoarding</h1>
-      <div className="space-y-4">
-        <button
-          onClick={enrollAsStudent}
-          className="btn btn-primary w-full max-w-xs"
-        >
-          Enroll as a Student
-        </button>
-        <button
-          onClick={enrollExaminer}
-          className="btn btn-secondary w-full max-w-xs"
-        >
-          Enroll as an Examiner
-        </button>
-        <button
-          onClick={nextTick}
-          className="btn btn-accent w-full max-w-xs"
-        >
-          Go to Home
-        </button>
+    <div className="flex items-center justify-center min-h-screen bg-customYellow3 p-6">
+      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+        <h1 className="text-3xl font-bold text-center text-customYellow2 mb-6">
+          Onboarding
+        </h1>
+        <div className="space-y-4">
+          <button
+            onClick={enrollAsStudent}
+            className="bg-customYellow2 text-white font-bold py-3 px-6 rounded-lg shadow-md w-full hover:bg-customYellow transition-transform transform hover:scale-105"
+          >
+            Enroll as a Student
+          </button>
+          <button
+            onClick={enrollExaminer}
+            className="bg-customYellow2 text-white font-bold py-3 px-6 rounded-lg shadow-md w-full hover:bg-customYellow transition-transform transform hover:scale-105"
+          >
+            Enroll as an Examiner
+          </button>
+          <button
+            onClick={nextTick}
+            className="bg-customYellow2 text-white font-bold py-3 px-6 rounded-lg shadow-md w-full hover:bg-customYellow transition-transform transform hover:scale-105"
+          >
+            Go to Home
+          </button>
+        </div>
       </div>
     </div>
   );

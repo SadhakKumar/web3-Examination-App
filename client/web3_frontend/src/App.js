@@ -9,7 +9,7 @@ import OnBoarding from "./pages/OnBoarding";
 import Exam from "./pages/Exam";
 import { Outlet } from "react-router-dom";
 import Test from "./pages/Test";
-import { create } from "kubo-rpc-client";
+import Declare from "./pages/Declare";
 
 // Rainbowkit imports
 import "@rainbow-me/rainbowkit/styles.css";
@@ -25,6 +25,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import Navbar from "./components/Navbar";
+import StudentEnrollment from "./pages/StudentEnrollment";
 
 const queryClient = new QueryClient();
 
@@ -51,8 +52,8 @@ const config = getDefaultConfig({
 
 // connect to the default API address http://localhost:5001
 
-// connect using a URL
-const client = create("/ip4/127.0.0.1/tcp/5001");
+
+
 
 function App() {
   return (
@@ -66,14 +67,13 @@ function App() {
               <Route path="/student" element={<StudentHome />} />
               <Route path="/examiner" element={<Outlet />}>
                 <Route path="/examiner" element={<ExaminerHome />} />
-                <Route
-                  path="/examiner/create"
-                  element={<CreateExam ipfs={client} />}
-                />
+                <Route path="/examiner/declare" element={<Declare />} />
+                <Route path="/examiner/create" element={<CreateExam />} />
               </Route>
               <Route path="/onboarding" element={<OnBoarding />} />
               <Route path="/exam" element={<Exam />} />
-              <Route path="/exam/:id" element={<Test ipfs={client}/>} />
+              <Route path="/exam/:id" element={<Test/>} />
+              <Route path="/enrollment" element={<StudentEnrollment/>}/>
             </Routes>
           </div>
         </RainbowKitProvider>

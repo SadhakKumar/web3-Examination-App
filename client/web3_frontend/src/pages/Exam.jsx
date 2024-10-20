@@ -19,7 +19,7 @@ const Exam = () => {
 
     // Create a new contract instance with the signer, allowing you to send transactions
     let contract = new ethers.Contract(
-      "0x429dcE369615ce444F2F69C229114aCAf91f8082",
+      process.env.REACT_APP_EXAMINER_CONTRACT_ADDRESS,
       Examiner.abi,
       signer
     );

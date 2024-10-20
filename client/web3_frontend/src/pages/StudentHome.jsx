@@ -1,21 +1,82 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import studentImg from "./student.png";
+import { useAccount } from "wagmi";
+import { ethers } from "ethers";
+import Declare from "../contracts/Declare.json";
+
 
 const StudentHome = () => {
   const navigate = useNavigate();
+  const { isConnected } = useAccount();
+  const [declareContract, setDeclareContract] = useState();
+  const [loading, setLoading] = useState(false);
+  const [allExams, setAllExams] = useState();
+
+  useEffect(() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    // Create a new contract instance with the signer
+    const contractInstance = new ethers.Contract(
+      process.env.REACT_APP_DECLARE_CONTRACT_ADDRESS,
+      Declare.abi,
+      signer
+    );
+    setDeclareContract(contractInstance);
+  }, []);
+
+  useEffect(() => {
+    const getAllExamsFromContract = async () => {
+      setLoading(true);
+      const allExams = await declareContract.getAllExams();
+      setAllExams(allExams);
+      setLoading(false);
+    };
+
+    if (declareContract) {
+      getAllExamsFromContract();
+      console.info(allExams);
+    }
+  }, [declareContract]);
+
+  useEffect(() => {
+    if (!isConnected) {
+      navigate("/");
+    }
+  }, [isConnected]);
+
+  
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded-lg p-8 w-96 text-center">
-        <h1 className="text-3xl font-bold mb-4">Welcome to Student Home</h1>
-        <p className="text-lg mb-6">Ready to start your exam?</p>
-        <button
-          onClick={() => navigate("/exam")}
-          className="btn btn-primary w-full"
-        >
-          Start Exam
-        </button>
+    <div className="flex items-center justify-center min-h-screen bg-customYellow3 p-6">
+      <div className="bg-white shadow-lg rounded-lg flex w-full max-w-5xl">
+        {/* Left Side - Image */}
+        <div className="w-1/2 p-6 flex items-center justify-center bg-customYellow2 rounded-l-lg">
+          <img
+            src={studentImg}
+            alt="Student"
+            className="w-90 h-80 object-cover rounded-full shadow-md"
+          />
+        </div>
+
+        {/* Right Side - Content */}
+        <div className="w-1/2 p-8 flex flex-col items-center justify-center">
+          <h1 className="text-3xl font-bold mb-4 text-customYellow2 text-center">
+            Welcome to Student Home
+          </h1>
+          <p className="text-lg text-gray-700 mb-6 text-center">
+            Ready to start your exam?
+          </p>
+          <button
+            onClick={() => navigate("/exam")}
+            className="bg-customYellow2 text-white font-bold py-3 px-6 rounded-lg shadow-md w-full hover:bg-customYellow transition-transform transform hover:scale-105"
+          >
+            Start Exam
+          </button>
+        </div>
       </div>
+
     </div>
   );
 };
