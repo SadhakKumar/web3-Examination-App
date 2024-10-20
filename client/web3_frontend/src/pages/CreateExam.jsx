@@ -6,7 +6,7 @@ import { pinata } from "../utils/config";
 import Examiner from "../contracts/Examiner.json";
 import ExamEnrollment from "../contracts/ExamEnrollment.json";
 
-const CreateExam = () => {
+const CreateExam = ({ ipfs }) => {
   const navigate = useNavigate();
   const [examinerContract, setExaminerContract] = useState();
   const [examEnrollmentContract, setExamEnrollmentContract] = useState();
@@ -123,24 +123,29 @@ const CreateExam = () => {
         SECRET_KEY
       ).toString();
 
-      const jsonQuestionBlob = new Blob([JSON.stringify(encryptedQuestions)], {
-        type: "application/json",
-      });
-      const jsonAnswerBlob = new Blob([JSON.stringify(encryptedAnswers)], {
-        type: "application/json",
-      });
+      const questionsCid = await ipfs.add(encryptedQuestions)
+      const answersCid = await ipfs.add(encryptedAnswers)
 
-      const jsonFile = new File([jsonQuestionBlob], "examData.json");
-      const jsonAnswerFile = new File([jsonAnswerBlob], "answerData.json");
+      // const jsonQuestionBlob = new Blob([JSON.stringify(encryptedQuestions)], {
+      //   type: "application/json",
+      // });
+      // const jsonAnswerBlob = new Blob([JSON.stringify(encryptedAnswers)], {
+      //   type: "application/json",
+      // });
 
-      // Upload to IPFS
-      const uploadQuestionResult = await pinata.upload.file(jsonFile);
-      questioncid = uploadQuestionResult.IpfsHash;
-      const uploadAnswerResult = await pinata.upload.file(jsonAnswerFile);
-      answercid = uploadAnswerResult.IpfsHash;
+      // const jsonFile = new File([jsonQuestionBlob], "examData.json");
+      // const jsonAnswerFile = new File([jsonAnswerBlob], "answerData.json");
 
-      console.log(uploadQuestionResult.IpfsHash);
-      console.log(uploadAnswerResult.IpfsHash);
+      // // Upload to IPFS
+      // const uploadQuestionResult = await pinata.upload.file(jsonFile);
+      // questioncid = uploadQuestionResult.IpfsHash;
+      // const uploadAnswerResult = await pinata.upload.file(jsonAnswerFile);
+      // answercid = uploadAnswerResult.IpfsHash;
+
+      // console.log(uploadQuestionResult.IpfsHash);
+      // console.log(uploadAnswerResult.IpfsHash);
+      console.log(questionsCid)
+      console.log(answersCid)
     } catch (error) {
       alert("Error uploading to IPFS:", error);
       console.log("Error uploading to IPFS:", error);

@@ -11040,12 +11040,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x3E07df655bef52BBe69B9591AfeC13225e33D3e0",
-      "transactionHash": "0x73ed2fcd0c3ff2edf3a50675d7805dc216f2239aca99adb64d741b54096c7ab6"
+      "address": "0x8a8556484C1d1cd5e90a5a88EA36c7C2dE3f5596",
+      "transactionHash": "0xd5171fae2fcf5a13244bdc0414dac456bcd6efa52f9c9f899c14952a5f9f7f66"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-09-26T06:45:22.768Z",
+  "updatedAt": "2024-10-14T13:40:15.470Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

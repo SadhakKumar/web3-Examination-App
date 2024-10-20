@@ -9,6 +9,7 @@ import OnBoarding from "./pages/OnBoarding";
 import Exam from "./pages/Exam";
 import { Outlet } from "react-router-dom";
 import Test from "./pages/Test";
+import { create } from "kubo-rpc-client";
 
 // Rainbowkit imports
 import "@rainbow-me/rainbowkit/styles.css";
@@ -46,6 +47,13 @@ const config = getDefaultConfig({
   ssr: false, // If your dApp uses server side rendering (SSR)
 });
 
+// /ip4/127.0.0.1/tcp/5001
+
+// connect to the default API address http://localhost:5001
+
+// connect using a URL
+const client = create("/ip4/127.0.0.1/tcp/5001");
+
 function App() {
   return (
     <WagmiProvider config={config}>
@@ -58,11 +66,14 @@ function App() {
               <Route path="/student" element={<StudentHome />} />
               <Route path="/examiner" element={<Outlet />}>
                 <Route path="/examiner" element={<ExaminerHome />} />
-                <Route path="/examiner/create" element={<CreateExam />} />
+                <Route
+                  path="/examiner/create"
+                  element={<CreateExam ipfs={client} />}
+                />
               </Route>
               <Route path="/onboarding" element={<OnBoarding />} />
               <Route path="/exam" element={<Exam />} />
-              <Route path="/exam/:id" element={<Test />} />
+              <Route path="/exam/:id" element={<Test ipfs={client}/>} />
             </Routes>
           </div>
         </RainbowKitProvider>

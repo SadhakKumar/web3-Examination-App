@@ -6,7 +6,7 @@ import Examiner from "../contracts/Examiner.json";
 import { AES, enc } from "crypto-js";
 import { pinata } from "../utils/config";
 
-const Test = () => {
+const Test = ({ ipfs }) => {
   const [contract, setContract] = useState(null);
   const [examinerContract, setExaminerContract] = useState(null);
   const [exam, setExam] = useState(null);
@@ -85,7 +85,8 @@ const Test = () => {
     setLoading(true);
     try {
       if (!exam) return;
-      const encryptedData = await pinata.gateways.get(exam.questions);
+      // const encryptedData = await pinata.gateways.get(exam.questions);
+      const encryptedData = await ipfs.cat(exam.questions);
 
       const data = encryptedData.data.replace(/^"|"$/g, "");
       const decryptedBytes = AES.decrypt(data, SECRET_KEY);
