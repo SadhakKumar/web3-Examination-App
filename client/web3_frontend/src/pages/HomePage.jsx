@@ -24,6 +24,18 @@ function HomePage() {
     setContract(contractInstance);
   }, []);
 
+  useEffect(() => {
+    if (contract) {
+      getRole();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isConnected === true) getRole();
+
+    if (isConnected === false) navigate("/");
+  }, [isConnected]);
+
   const getRole = async () => {
     try {
       const student = await contract.getStudent(address);
@@ -60,6 +72,8 @@ function HomePage() {
             <ConnectButton />
           </div>
         ) : (
+          // <p>role : {getRole()}</p>
+          // getRole()
           <div>
             <p className="text-lg text-center mb-2">Connected Account:</p>
             <p className="font-semibold text-lg text-center mb-4">{address}</p>

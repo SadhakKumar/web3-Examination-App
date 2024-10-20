@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import studentImg from "./student.png";
+import { useAccount } from "wagmi";
 
 const StudentHome = () => {
   const navigate = useNavigate();
+  const { isConnected } = useAccount();
+
+  useEffect(() => {
+    if (!isConnected) {
+      navigate("/");
+    }
+  }, [isConnected]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-customYellow3 p-6">
