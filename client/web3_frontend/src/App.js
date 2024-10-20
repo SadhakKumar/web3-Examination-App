@@ -9,7 +9,8 @@ import OnBoarding from "./pages/OnBoarding";
 import Exam from "./pages/Exam";
 import { Outlet } from "react-router-dom";
 import Test from "./pages/Test";
-import Declare from "./pages/Declare";
+import DeclareExam from "./pages/DeclareExam";
+import ExaminerSideExam from "./pages/ExaminerSideExam";
 
 // Rainbowkit imports
 import "@rainbow-me/rainbowkit/styles.css";
@@ -59,7 +60,11 @@ function App() {
               <Route path="/student" element={<StudentHome />} />
               <Route path="/examiner" element={<Outlet />}>
                 <Route path="/examiner" element={<ExaminerHome />} />
-                <Route path="/examiner/declare" element={<Declare />} />
+                <Route path="/examiner/declare" element={<DeclareExam />} />
+                <Route
+                  path="/examiner/exam/:id"
+                  element={<ExaminerSideExam />}
+                />
                 <Route path="/examiner/create" element={<CreateExam />} />
               </Route>
               <Route path="/onboarding" element={<OnBoarding />} />

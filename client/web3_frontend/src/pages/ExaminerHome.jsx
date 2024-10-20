@@ -21,6 +21,7 @@ const ExaminerHome = () => {
       Declare.abi,
       signer
     );
+
     setContract(contractInstance);
   }, []);
 
@@ -45,6 +46,8 @@ const ExaminerHome = () => {
     <>
       {loading ? (
         <span className="loading loading-spinner loading-lg"></span>
+      ) : exams.length === 0 ? (
+        <p>no exams yet</p>
       ) : (
         exams.map((exam, index) => <Card exam={exam} key={index} />)
       )}
