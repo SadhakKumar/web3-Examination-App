@@ -8,6 +8,7 @@ contract Exam {
     string public lastEnrollmentDate;
     uint public duration;
     uint public creationTime;
+    string public examHash;
 
     bool public isExamCreated = false;
     string private questionsCID;
@@ -31,7 +32,8 @@ contract Exam {
         string memory _date,
         string memory _lastEnrollmentDate,
         uint _examDuration,
-        uint _examCreationTime
+        uint _examCreationTime,
+        string memory _examHash
     ) {
         owner = _owner;
         name = _name;
@@ -40,6 +42,7 @@ contract Exam {
         duration = _examDuration;
         verifiers[_owner] = true;
         creationTime = _examCreationTime;
+        examHash = _examHash;
     }
 
     // Function for the students to Enroll to a perticular exam
@@ -94,6 +97,13 @@ contract Exam {
     function verifyStudent(address _studentAddress) public {
         require(verifiers[msg.sender], "You are not authorized to verify");
         enrolledStudents[_studentAddress].isVerified = true;
+    }
+
+    // Function to check if student is enrolled or not
+    function isStudentEnrolled(
+        address _studentAddress
+    ) public view returns (bool) {
+        return enrolledStudents[_studentAddress].isEnrolled;
     }
 
     // Function to check if the student is verified or not

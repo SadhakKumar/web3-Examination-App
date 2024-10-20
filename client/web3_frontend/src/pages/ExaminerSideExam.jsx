@@ -35,10 +35,6 @@ const ExaminerSideExam = () => {
   }, []);
 
   useEffect(() => {
-    const getquestionCID = async () => {
-      const questionCID = await contract.getExamCID();
-      console.log("questionCID : ", questionCID);
-    };
     const getExamDetails = async () => {
       const examName = await contract.name();
       const startTime = await contract.date();
@@ -180,6 +176,16 @@ const ExaminerSideExam = () => {
     }
   };
 
+  const verifyStudent = async (studentAddress) => {
+    try {
+      const tx = await contract.verifyStudent(studentAddress);
+      await tx.wait();
+      alert("Student verified successfully");
+    } catch (error) {
+      console.log("Error verifying student: ", error);
+    }
+  };
+
   return (
     <>
       <div>
@@ -195,11 +201,54 @@ const ExaminerSideExam = () => {
           <span className="loading loading-spinner loading-lg"></span>
         )}
 
-        {students.length > 0 ? (
-          <h1>{students.length}</h1>
-        ) : (
-          <h1>no students</h1>
-        )}
+        <div className="flex justify-center items-center flex-col">
+          <h1>All Not Verified Students</h1>
+          <div className="flex">
+            {students.length > 0 ? (
+              students
+                .filter((student) => !student.isVerified)
+                .map((student, index) => (
+                  <div
+                    className="card bg-base-100 w-96 shadow-xl m-10"
+                    key={index}
+                  >
+                    <div className="card-body">
+                      <h2 className="card-title">{student.name}</h2>
+                      <p>
+                        govermentDocument:{" "}
+                        <a
+                          className="link link-primary"
+                          href={`https://copper-magnificent-kingfisher-423.mypinata.cloud/ipfs/${student.govermentDocument}`}
+                        >
+                          link
+                        </a>
+                      </p>
+                      <p>
+                        marksheet:{" "}
+                        <a
+                          className="link link-primary"
+                          href={`https://copper-magnificent-kingfisher-423.mypinata.cloud/ipfs/${student.marksheet}`}
+                        >
+                          link
+                        </a>
+                      </p>
+                      <p>is verified? : {student.isVerified.toString()}</p>
+                      <div className="card-actions justify-end">
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => verifyStudent(student.studentAddress)}
+                        >
+                          Verify
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+            ) : (
+              <h1>No Student Enrollments</h1>
+            )}
+          </div>
+        </div>
 
         <h1 className="text-2xl mt-10">Add new Verifiers</h1>
         <div>

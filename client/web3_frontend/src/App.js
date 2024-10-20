@@ -11,6 +11,9 @@ import { Outlet } from "react-router-dom";
 import Test from "./pages/Test";
 import DeclareExam from "./pages/DeclareExam";
 import ExaminerSideExam from "./pages/ExaminerSideExam";
+import StudentSideExamDetails from "./pages/StudentSideExamDetails";
+import StudentsMyExams from "./pages/StudentsMyExams";
+import StudentExam from "./pages/StudentExam";
 
 // Rainbowkit imports
 import "@rainbow-me/rainbowkit/styles.css";
@@ -26,6 +29,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import Navbar from "./components/Navbar";
+import StudentEnrollment from "./pages/StudentEnrollment";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +52,10 @@ const config = getDefaultConfig({
   ssr: false, // If your dApp uses server side rendering (SSR)
 });
 
+// /ip4/127.0.0.1/tcp/5001
+
+// connect to the default API address http://localhost:5001
+
 function App() {
   return (
     <WagmiProvider config={config}>
@@ -57,7 +65,21 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/student" element={<StudentHome />} />
+              // Students routes
+              <Route path="/student" element={<Outlet />}>
+                <Route path="/student" element={<StudentHome />} />
+                <Route path="/student/myexams" element={<StudentsMyExams />} />
+                <Route path="/student/myexams/:id" element={<StudentExam />} />
+                <Route
+                  path="/student/:id"
+                  element={<StudentSideExamDetails />}
+                />
+                <Route
+                  path="/student/:id/enrollment"
+                  element={<StudentEnrollment />}
+                />
+              </Route>
+              // Examiner routes
               <Route path="/examiner" element={<Outlet />}>
                 <Route path="/examiner" element={<ExaminerHome />} />
                 <Route path="/examiner/declare" element={<DeclareExam />} />
@@ -65,7 +87,7 @@ function App() {
                   path="/examiner/exam/:id"
                   element={<ExaminerSideExam />}
                 />
-                <Route path="/examiner/create" element={<CreateExam />} />
+                {/* <Route path="/examiner/create" element={<CreateExam />} /> */}
               </Route>
               <Route path="/onboarding" element={<OnBoarding />} />
               <Route path="/exam" element={<Exam />} />

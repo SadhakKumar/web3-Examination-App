@@ -38,7 +38,8 @@ contract Declare {
             _date,
             _lastEnrollmentDate,
             _duration,
-            block.timestamp
+            block.timestamp,
+            _exam_hash
         );
 
         ExamDeclaration memory newExam = ExamDeclaration(

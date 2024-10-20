@@ -7,7 +7,7 @@ import Examiner from "../contracts/Examiner.json";
 import ExamEnrollment from "../contracts/ExamEnrollment.json";
 import Papa from "papaparse";
 
-const CreateExam = () => {
+const CreateExam = (  ) => {
   const navigate = useNavigate();
   const [examinerContract, setExaminerContract] = useState();
   const [examEnrollmentContract, setExamEnrollmentContract] = useState();
@@ -103,6 +103,9 @@ const CreateExam = () => {
         SECRET_KEY
       ).toString();
 
+      // const questionsCid = await ipfs.add(encryptedQuestions)
+      // const answersCid = await ipfs.add(encryptedAnswers)
+
       const jsonQuestionBlob = new Blob([JSON.stringify(encryptedQuestions)], {
         type: "application/json",
       });
@@ -117,6 +120,12 @@ const CreateExam = () => {
       questioncid = uploadQuestionResult.IpfsHash;
       const uploadAnswerResult = await pinata.upload.file(jsonAnswerFile);
       answercid = uploadAnswerResult.IpfsHash;
+
+      // Upload to IPFS
+      // const uploadQuestionResult = await pinata.upload.file(jsonFile);
+      // questioncid = uploadQuestionResult.IpfsHash;
+      // const uploadAnswerResult = await pinata.upload.file(jsonAnswerFile);
+      // answercid = uploadAnswerResult.IpfsHash;
 
       console.log(uploadQuestionResult.IpfsHash);
       console.log(uploadAnswerResult.IpfsHash);
@@ -189,7 +198,9 @@ const CreateExam = () => {
 
         {/* File Upload Section */}
         <div className="mb-6">
-          <h2 className="text-lg font-bold mb-4 text-gray-700">Upload CSV Files</h2>
+          <h2 className="text-lg font-bold mb-4 text-gray-700">
+            Upload CSV Files
+          </h2>
           <div className="space-y-4">
             <div>
               <h3 className="text-gray-600 mb-2">Questions CSV</h3>
