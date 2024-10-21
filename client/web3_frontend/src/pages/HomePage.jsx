@@ -38,6 +38,7 @@ function HomePage() {
 
   const getRole = async () => {
     try {
+      console.log("Hello")
       const student = await contract.getStudent(address);
       if (student.name !== "") {
         navigate("/student");

@@ -40,6 +40,7 @@ const Test = () => {
       if (!examinerContract) return;
       try {
         const exams = await examinerContract.getExam(id);
+        console.log(exams)
 
         setExam(exams);
       } catch (error) {
@@ -50,25 +51,25 @@ const Test = () => {
     getExams();
   }, [examinerContract, id]);
 
-  // useEffect(() => {
-  //   const check = async () => {
-  //     if (!contract) {
-  //       console.log("Contract is not initialized yet.");
-  //       return;
-  //     }
+  useEffect(() => {
+    const check = async () => {
+      if (!contract) {
+        console.log("Contract is not initialized yet.");
+        return;
+      }
 
-  //     try {
-  //       const enrolledStatus = await contract.checkEnrollment(id);
-  //       if (enrolledStatus) {
-  //         setEnrolled(true);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error checking enrollment:", error);
-  //     }
-  //   };
+      try {
+        const enrolledStatus = await contract.checkEnrollment(id);
+        if (enrolledStatus) {
+          setEnrolled(true);
+        }
+      } catch (error) {
+        console.error("Error checking enrollment:", error);
+      }
+    };
 
-  //   check();
-  // }, [contract, id]);
+    check();
+  }, [contract, id]);
 
   const enroll = async () => {
     try {
@@ -87,6 +88,7 @@ const Test = () => {
     try {
       if (!exam) return;
       const encryptedData = await pinata.gateways.get(exam.questions);
+ 
       const data = encryptedData.data.replace(/^"|"$/g, "");
       const decryptedBytes = AES.decrypt(data, SECRET_KEY);
       const decryptedQuestions = decryptedBytes.toString(enc.Utf8);
@@ -101,6 +103,7 @@ const Test = () => {
 
   const handleStartExam = () => {
     getFromIPFS();
+
   };
 
   return (
