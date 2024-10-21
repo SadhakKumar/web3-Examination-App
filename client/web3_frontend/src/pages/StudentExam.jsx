@@ -50,7 +50,7 @@ const StudentExam = () => {
     }
   }, [contract]);
   return (
-    <div className="p-5 flex flex-col items-center bg-customYellow3">
+    <div className="p-5 flex flex-col items-center bg-customYellow34">
       <h1 className="text-2xl font-semibold mb-4">Exam Status</h1>
       <div className="mb-6">
         <p className={`text-lg ${verified ? 'text-green-600' : 'text-red-600'}`}>
