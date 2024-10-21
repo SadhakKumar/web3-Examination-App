@@ -9,7 +9,6 @@ module.exports = function (deployer) {
     "_lastEnrollmentDate",
     0,
     0,
-    0,
-    0
+    ""
   );
 };

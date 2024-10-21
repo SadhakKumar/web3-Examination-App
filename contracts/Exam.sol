@@ -6,12 +6,11 @@ contract Exam {
     string public name;
     string public date;
     string public lastEnrollmentDate;
-    uint public start_time;
     uint public duration;
     uint public creationTime;
-    uint public enrollment_duration;
+    string public examHash;
 
-    bool isExamCreated = false;
+    bool public isExamCreated = false;
     string private questionsCID;
     string private answersCID;
 
@@ -32,20 +31,18 @@ contract Exam {
         string memory _name,
         string memory _date,
         string memory _lastEnrollmentDate,
-        uint _examStartTime,
         uint _examDuration,
         uint _examCreationTime,
-        uint _examEnrollmentduration
+        string memory _examHash
     ) {
         owner = _owner;
         name = _name;
         date = _date;
         lastEnrollmentDate = _lastEnrollmentDate;
-        start_time = block.timestamp + _examStartTime;
         duration = _examDuration;
         verifiers[_owner] = true;
         creationTime = _examCreationTime;
-        enrollment_duration = _examEnrollmentduration;
+        examHash = _examHash;
     }
 
     // Function for the students to Enroll to a perticular exam
@@ -57,10 +54,6 @@ contract Exam {
         require(
             !enrolledStudents[msg.sender].isEnrolled,
             "You are already enrolled"
-        );
-        require(
-            block.timestamp < creationTime + enrollment_duration,
-            "Enrollment Time finished"
         );
         address _address = msg.sender;
         student memory newStudent = student(
@@ -104,6 +97,13 @@ contract Exam {
     function verifyStudent(address _studentAddress) public {
         require(verifiers[msg.sender], "You are not authorized to verify");
         enrolledStudents[_studentAddress].isVerified = true;
+    }
+
+    // Function to check if student is enrolled or not
+    function isStudentEnrolled(
+        address _studentAddress
+    ) public view returns (bool) {
+        return enrolledStudents[_studentAddress].isEnrolled;
     }
 
     // Function to check if the student is verified or not

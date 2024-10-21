@@ -87,7 +87,6 @@ const Test = () => {
     try {
       if (!exam) return;
       const encryptedData = await pinata.gateways.get(exam.questions);
- 
       const data = encryptedData.data.replace(/^"|"$/g, "");
       const decryptedBytes = AES.decrypt(data, SECRET_KEY);
       const decryptedQuestions = decryptedBytes.toString(enc.Utf8);

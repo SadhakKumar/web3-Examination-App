@@ -7,12 +7,11 @@ contract Declare {
     struct ExamDeclaration {
         string examName;
         string examDate;
-        uint examStartTime;
+        string lastEnrollmentDate;
         uint examDuration;
         string examHash;
         address examContractAddress;
         uint creationTime;
-        uint enrollmentDuration;
     }
 
     mapping(string => ExamDeclaration) public declarations;
@@ -29,10 +28,8 @@ contract Declare {
         string memory _name,
         string memory _date,
         string memory _lastEnrollmentDate,
-        uint _start_time,
         uint _duration,
-        string memory _exam_hash,
-        uint _enrollment_duration
+        string memory _exam_hash
     ) public {
         examHashes.push(_exam_hash);
         Exam test = new Exam(
@@ -40,21 +37,19 @@ contract Declare {
             _name,
             _date,
             _lastEnrollmentDate,
-            _start_time,
             _duration,
             block.timestamp,
-            _enrollment_duration
+            _exam_hash
         );
 
         ExamDeclaration memory newExam = ExamDeclaration(
             _name,
             _date,
-            _start_time,
+            _lastEnrollmentDate,
             _duration,
             _exam_hash,
             address(test),
-            block.timestamp,
-            _enrollment_duration
+            block.timestamp
         );
         declarations[_exam_hash] = newExam;
         allExamEnrollment[_exam_hash][msg.sender] = true;

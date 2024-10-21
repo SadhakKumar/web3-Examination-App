@@ -9,7 +9,11 @@ import OnBoarding from "./pages/OnBoarding";
 import Exam from "./pages/Exam";
 import { Outlet } from "react-router-dom";
 import Test from "./pages/Test";
-import Declare from "./pages/Declare";
+import DeclareExam from "./pages/DeclareExam";
+import ExaminerSideExam from "./pages/ExaminerSideExam";
+import StudentSideExamDetails from "./pages/StudentSideExamDetails";
+import StudentsMyExams from "./pages/StudentsMyExams";
+import StudentExam from "./pages/StudentExam";
 
 // Rainbowkit imports
 import "@rainbow-me/rainbowkit/styles.css";
@@ -52,9 +56,6 @@ const config = getDefaultConfig({
 
 // connect to the default API address http://localhost:5001
 
-
-
-
 function App() {
   return (
     <WagmiProvider config={config}>
@@ -64,16 +65,33 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/student" element={<StudentHome />} />
+              // Students routes
+              <Route path="/student" element={<Outlet />}>
+                <Route path="/student" element={<StudentHome />} />
+                <Route path="/student/myexams" element={<StudentsMyExams />} />
+                <Route path="/student/myexams/:id" element={<StudentExam />} />
+                <Route
+                  path="/student/:id"
+                  element={<StudentSideExamDetails />}
+                />
+                <Route
+                  path="/student/:id/enrollment"
+                  element={<StudentEnrollment />}
+                />
+              </Route>
+              // Examiner routes
               <Route path="/examiner" element={<Outlet />}>
                 <Route path="/examiner" element={<ExaminerHome />} />
-                <Route path="/examiner/declare" element={<Declare />} />
-                <Route path="/examiner/create" element={<CreateExam />} />
+                <Route path="/examiner/declare" element={<DeclareExam />} />
+                <Route
+                  path="/examiner/exam/:id"
+                  element={<ExaminerSideExam />}
+                />
+                {/* <Route path="/examiner/create" element={<CreateExam />} /> */}
               </Route>
               <Route path="/onboarding" element={<OnBoarding />} />
               <Route path="/exam" element={<Exam />} />
-              <Route path="/exam/:id" element={<Test/>} />
-              <Route path="/enrollment" element={<StudentEnrollment/>}/>
+              <Route path="/exam/:id" element={<Test />} />
             </Routes>
           </div>
         </RainbowKitProvider>

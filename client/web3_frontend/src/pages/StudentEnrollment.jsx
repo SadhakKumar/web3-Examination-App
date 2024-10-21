@@ -1,128 +1,166 @@
-import React from "react";
-import Papa from "papaparse";
-import { useState } from "react";
-import { AES, enc } from "crypto-js";
-import { pinata } from "../utils/config";
+import React, { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { useParams } from "react-router-dom";
+import Exam from "../contracts/Exam.json";
+import Declare from "../contracts/Declare.json";
 
 export default function StudentEnrollment() {
-  const [governmentDocuments, setGovernmentDocuments] = useState(null);
-  const [examMarksheet, setexamMarksheet] = useState(null);
-  const [base64, setBase64] = useState("");
+  const { id } = useParams();
+  const [contract, setContract] = useState(null);
+  const [declareContract, setDeclareContract] = useState(null);
+  const [studentName, setStudentName] = useState("");
+  const [governmentIDBase64, setGovernmentIDBase64] = useState("");
+  const [marksheetBase64, setMarksheetBase64] = useState("");
 
-  const handleFileUpload = (e, value) => {
+  useEffect(() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    const contractInstance = new ethers.Contract(id, Exam.abi, signer);
+    const declareContractInstance = new ethers.Contract(
+      process.env.REACT_APP_DECLARE_CONTRACT_ADDRESS,
+      Declare.abi,
+      signer
+    );
+
+    setContract(contractInstance);
+    setDeclareContract(declareContractInstance);
+  }, [id]);
+
+  const handleFileUpload = (e, setBase64Callback) => {
     const file = e.target.files[0];
-    if (file) {
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (result) => {
-          if (value === "govDocument") {
-            setGovernmentDocuments(result.data);
-          } else {
-            setexamMarksheet(result.data);
-          }
-        },
-      });
-    }
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file); // Convert file to base64
+    reader.onload = () => {
+      setBase64Callback(reader.result); // Set the base64 string
+    };
+    reader.onerror = (error) => {
+      console.error("Error reading file:", error);
+    };
   };
 
-  // const SECRET_KEY = "6c187bb65c1a4dbf9b3fc8b576a1c2dd";
+  const uploadToIPFS = async (base64Data, fileName) => {
+    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
-  const uploadToIPFS = async () => {
-    try {
-      const reader = new FileReader();
+    // Create a new FormData object to send file data in multipart/form-data format
+    const formData = new FormData();
 
-      reader.readAsDataURL(governmentDocuments); // Read file as base64
+    // Append the file data and metadata to the form
+    formData.append("file", base64ToBlob(base64Data), fileName);
 
-      reader.onload = () => {
-        const base64String = reader.result; // This is the Base64 string
-        setBase64(base64String);
-        console.log(base64String); // You can see the Base64-encoded PDF in the console
-      };
+    const metadata = JSON.stringify({
+      name: fileName,
+    });
 
-      reader.onerror = (error) => {
-        console.error("Error reading file:", error);
-      };
+    formData.append("pinataMetadata", metadata);
+    formData.append("pinataOptions", JSON.stringify({ cidVersion: 0 }));
 
-      // const encryptedQuestions = AES.encrypt(
-      //   JSON.stringify(jsonResultQuestions),
-      //   SECRET_KEY
-      // ).toString();
-      // const encryptedAnswers = AES.encrypt(
-      //   JSON.stringify(jsonResultAnswers),
-      //   SECRET_KEY
-      // ).toString();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_PINATA_JWT}`, // JWT token from Pinata
+      },
+      body: formData, // Send formData
+    });
 
-      // const questionsCid = await ipfs.add(encryptedQuestions)
-      // const answersCid = await ipfs.add(encryptedAnswers)
-      const governmentDocumentsResult = await pinata.upload.base64(base64);
-      const governmentDocumentsCID = governmentDocumentsResult.IpfsHash;
-      const examMarksheetResult = await pinata.upload.base64(
-        "SGVsbG8gV29ybGQh"
-      );
-      const examMarksheetResultCID = governmentDocumentsResult.IpfsHash;
-
-
-
-      console.log(governmentDocumentsCID);
-     } catch (error) {
-      alert("Error uploading to IPFS:", error);
-      console.log("Error uploading to IPFS:", error);
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(`Failed to upload to IPFS: ${result.error}`);
     }
 
-    // try {
-    //   await examinerContract.createExam(
-    //     hash,
-    //     questioncid,
-    //     answercid,
-    //     examDetails.startTime,
-    //     examDetails.startTime,
-    //     examDetails.duration,
-    //     examDetails.examName
-    //   );
-    //   console.log("Exam created successfully!");
+    return result.IpfsHash; // Return IPFS hash of the uploaded file
+  };
 
-    //   await examEnrollmentContract.createExam(hash);
-    // } catch (error) {
-    //   alert("Error creating exam:", error);
-    //   console.error("Error creating exam:", error);
-    // }
+  // Helper function to convert Base64 to Blob
+  const base64ToBlob = (base64Data) => {
+    const byteCharacters = atob(base64Data.split(",")[1]); // Decode base64 data
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: "application/octet-stream" });
+  };
 
-    // navigate("/examiner");
+  const enrollStudent = async () => {
+    try {
+      const governmentIDBase64ipfs = await uploadToIPFS(
+        governmentIDBase64,
+        "governmentID.pdf"
+      );
+      const marksheetBase64ipfs = await uploadToIPFS(
+        marksheetBase64,
+        "marksheet.pdf"
+      );
+
+      console.log("Government ID CID:", governmentIDBase64ipfs);
+      console.log("Marksheet CID:", marksheetBase64ipfs);
+
+      // Now enroll the student on-chain with the obtained CIDs
+      const tx = await contract.enrollStudent(
+        studentName,
+        governmentIDBase64ipfs,
+        marksheetBase64ipfs
+      );
+      await tx.wait();
+      console.log("Student enrolled successfully");
+
+      // Call the declare contract to enroll the student in the particular exam
+      const examHash = await contract.examHash();
+      const tx2 = await declareContract.enrollStudentToParticularExam(examHash);
+      await tx2.wait();
+      console.log("Student enrolled to particular exam");
+    } catch (error) {
+      console.error("Error enrolling student:", error);
+    }
   };
 
   return (
-    <div>
-      <div>
-        <h3 className="text-gray-600 mb-2">Answers CSV</h3>
-        <input
-          type="file"
-          accept=".csv"
-          onChange={(e) => handleFileUpload(e, "answers")}
-          className="input input-bordered w-full p-3 border-gray-300 rounded-lg"
-        />
-        {/* {governmentDocuments && (
-          <pre className="bg-gray-100 p-4 mt-4 rounded-lg text-sm">
-            {JSON.stringify(governmentDocuments, null, 2)}
-          </pre>
-        )} */}
-        <h3 className="text-gray-600 mb-2 mt-4">Government Document</h3>
-        <input
-          type="file"
-          accept=".pdf,.jpg,.jpeg,.png"
-          onChange={(e) => handleFileUpload(e, "govDocument")}
-          className="input input-bordered w-full p-3 border-gray-300 rounded-lg"
-        />
+    <div className="p-5">
+      <h2 className="text-xl mb-4">Student Enrollment</h2>
 
-        <h3 className="text-gray-600 mb-2 mt-4">Marksheet (Image or PDF)</h3>
+      {/* Student Name Input */}
+      <div className="mb-4">
+        <label className="block text-gray-600 mb-2">Student Name</label>
+        <input
+          type="text"
+          value={studentName}
+          onChange={(e) => setStudentName(e.target.value)}
+          className="input input-bordered w-full p-3 border-gray-300 rounded-lg"
+          placeholder="Enter student name"
+        />
+      </div>
+
+      {/* Government ID Input */}
+      <div className="mb-4">
+        <label className="block text-gray-600 mb-2">
+          Government ID (PDF/Image)
+        </label>
         <input
           type="file"
           accept=".pdf,.jpg,.jpeg,.png"
-          onChange={(e) => handleFileUpload(e, "marksheet")}
+          onChange={(e) => handleFileUpload(e, setGovernmentIDBase64)}
           className="input input-bordered w-full p-3 border-gray-300 rounded-lg"
         />
       </div>
-      <button onClick={uploadToIPFS}>upload</button>
+
+      {/* Marksheet Input */}
+      <div className="mb-4">
+        <label className="block text-gray-600 mb-2">
+          Marksheet (PDF/Image)
+        </label>
+        <input
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          onChange={(e) => handleFileUpload(e, setMarksheetBase64)}
+          className="input input-bordered w-full p-3 border-gray-300 rounded-lg"
+        />
+      </div>
+
+      <button onClick={enrollStudent} className="btn btn-primary">
+        Upload to IPFS & Enroll
+      </button>
     </div>
   );
 }
