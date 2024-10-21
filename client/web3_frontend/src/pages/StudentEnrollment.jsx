@@ -104,8 +104,8 @@ export default function StudentEnrollment() {
         {/* {governmentDocuments && (
           <pre className="bg-gray-100 p-4 mt-4 rounded-lg text-sm">
             {JSON.stringify(governmentDocuments, null, 2)}
-          </pre> */}
-        )}
+          </pre>
+        )} */}
         <h3 className="text-gray-600 mb-2 mt-4">Government Document</h3>
         <input
           type="file"

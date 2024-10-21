@@ -6,11 +6,11 @@ import Examiner from "../contracts/Examiner.json";
 import { AES, enc } from "crypto-js";
 import { pinata } from "../utils/config";
 
-const Test = ({ ipfs }) => {
+const Test = () => {
   const [contract, setContract] = useState(null);
   const [examinerContract, setExaminerContract] = useState(null);
   const [exam, setExam] = useState(null);
-  const [enrolled, setEnrolled] = useState(false);
+  const [enrolled, setEnrolled] = useState(true);
   const [testPaper, setTestPaper] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -50,25 +50,25 @@ const Test = ({ ipfs }) => {
     getExams();
   }, [examinerContract, id]);
 
-  useEffect(() => {
-    const check = async () => {
-      if (!contract) {
-        console.log("Contract is not initialized yet.");
-        return;
-      }
+  // useEffect(() => {
+  //   const check = async () => {
+  //     if (!contract) {
+  //       console.log("Contract is not initialized yet.");
+  //       return;
+  //     }
 
-      try {
-        const enrolledStatus = await contract.checkEnrollment(id);
-        if (enrolledStatus) {
-          setEnrolled(true);
-        }
-      } catch (error) {
-        console.error("Error checking enrollment:", error);
-      }
-    };
+  //     try {
+  //       const enrolledStatus = await contract.checkEnrollment(id);
+  //       if (enrolledStatus) {
+  //         setEnrolled(true);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error checking enrollment:", error);
+  //     }
+  //   };
 
-    check();
-  }, [contract, id]);
+  //   check();
+  // }, [contract, id]);
 
   const enroll = async () => {
     try {
@@ -86,9 +86,8 @@ const Test = ({ ipfs }) => {
     setLoading(true);
     try {
       if (!exam) return;
-      // const encryptedData = await pinata.gateways.get(exam.questions);
-      const encryptedData = await ipfs.cat(exam.questions);
-
+      const encryptedData = await pinata.gateways.get(exam.questions);
+ 
       const data = encryptedData.data.replace(/^"|"$/g, "");
       const decryptedBytes = AES.decrypt(data, SECRET_KEY);
       const decryptedQuestions = decryptedBytes.toString(enc.Utf8);
