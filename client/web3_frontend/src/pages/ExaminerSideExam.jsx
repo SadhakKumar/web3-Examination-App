@@ -44,8 +44,8 @@ const ExaminerSideExam = () => {
       const creationTimeBigNumber = await contract.creationTime();
       const creationTime = creationTimeBigNumber.toNumber();
 
-      //   const isExamCreated = await contract.isExamCreated();
-      //   setIsExamCreated(isExamCreated);
+        const isExamCreated = await contract.isExamCreated();
+        setIsExamCreated(isExamCreated);
 
       const students = await contract.getAllStudents();
       setStudents(students);
