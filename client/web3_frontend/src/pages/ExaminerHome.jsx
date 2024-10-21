@@ -68,7 +68,7 @@
 
 
 
-// <div className="flex items-center justify-center min-h-screen bg-customYellow3 p-6">
+//  <div className="flex items-center justify-center min-h-screen bg-customYellow3 p-6">
 //   <div className="bg-white shadow-lg rounded-lg flex w-full max-w-5xl">
 //     {/* Left Side - Image */}
 //     <div className="w-1/2 p-6 flex items-center justify-center bg-customYellow2 rounded-l-lg">
@@ -95,7 +95,7 @@
 //       </button>
 //     </div>
 //   </div>
-// </div>
+// </div> 
 
 
 import React, { useState, useEffect } from "react";

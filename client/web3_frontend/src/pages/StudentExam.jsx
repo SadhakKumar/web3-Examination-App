@@ -50,15 +50,32 @@ const StudentExam = () => {
     }
   }, [contract]);
   return (
-    <>
-      <h1>status : {verified.toString()}</h1>
-      <h1>Exam Details</h1>
-      <h2>Exam Name : {exam.examName}</h2>
-      <p>Start Time : {exam.startTime}</p>
-      <p>Duration : {exam.duration}</p>
-      <p>Last Enrollment Date : {exam.lastEnrollmentDate}</p>
-    </>
+    <div className="p-5 flex flex-col items-center bg-customYellow3">
+      <h1 className="text-2xl font-semibold mb-4">Exam Status</h1>
+      <div className="mb-6">
+        <p className={`text-lg ${verified ? 'text-green-600' : 'text-red-600'}`}>
+          {verified ? 'You are verified for this exam.' : 'You are not verified for this exam.'}
+        </p>
+      </div>
+
+      <h2 className="text-xl font-semibold mb-4">Exam Details</h2>
+      <div className="card bg-white shadow-lg rounded-lg p-4 border border-gray-200 w-96"> {/* Fixed width */}
+        <h3 className="text-lg font-semibold text-customYellow2 mb-2">Exam Name</h3>
+        <p className="text-gray-700 mb-2">{exam.examName}</p>
+
+        <h3 className="text-lg font-semibold text-customYellow2 mb-2">Start Time</h3>
+        <p className="text-gray-700 mb-2">{exam.startTime}</p>
+
+        <h3 className="text-lg font-semibold text-customYellow2 mb-2">Duration</h3>
+        <p className="text-gray-700 mb-2">{exam.duration} minutes</p>
+
+        <h3 className="text-lg font-semibold text-customYellow2 mb-2">Last Enrollment Date</h3>
+        <p className="text-gray-700">{exam.lastEnrollmentDate}</p>
+      </div>
+    </div>
   );
+
+
 };
 
 export default StudentExam;
