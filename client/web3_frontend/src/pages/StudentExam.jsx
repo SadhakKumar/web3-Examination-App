@@ -132,9 +132,11 @@ const StudentExam = () => {
           </p>
         </div>
       ) : (
-        <p className="text-lg text-red-600 mt-4">
-          You are not allowed to give the exam.
-        </p>
+        !verified && (
+          <p className="text-lg text-red-600 mt-4">
+            You are not verified to give the exam.
+          </p>
+        )
       )}
     </div>
   );
