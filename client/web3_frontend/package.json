@@ -23,6 +23,7 @@
     "helia": "^4.2.6",
     "ipfs-core": "^0.18.1",
     "ipfs-http-client": "^60.0.1",
+    "moment": "^2.30.1",
     "papaparse": "^5.4.1",
     "pinata-web3": "^0.4.1",
     "react": "^18.3.1",

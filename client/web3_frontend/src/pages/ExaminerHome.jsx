@@ -66,8 +66,6 @@
 
 // export default ExaminerHome;
 
-
-
 //  <div className="flex items-center justify-center min-h-screen bg-customYellow3 p-6">
 //   <div className="bg-white shadow-lg rounded-lg flex w-full max-w-5xl">
 //     {/* Left Side - Image */}
@@ -95,8 +93,7 @@
 //       </button>
 //     </div>
 //   </div>
-// </div> 
-
+// </div>
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -130,6 +127,7 @@ const ExaminerHome = () => {
     const getAllExamsByExaminer = async () => {
       setLoading(true);
       const allExams = await contract.getExamsDeclaredByOwner();
+      console.log(allExams);
       setExams(allExams);
       setLoading(false);
     };
@@ -175,18 +173,21 @@ const ExaminerHome = () => {
                 className="bg-white border border-gray-300 p-4 rounded-lg mx-5" // Added a light border around the card
               >
                 <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-                  {exam.name}
+                  {exam.examName}
                 </h2>
                 <p className="text-md text-gray-600 mb-1">
                   Subject: {exam.subject}
                 </p>
                 <p className="text-md text-gray-600 mb-1">
-                  Date: {new Date(exam.date).toLocaleDateString()}
+                  Date: {new Date(exam.examDuration).toLocaleDateString()}
                 </p>
                 <p className="text-md text-gray-600 mb-3">
                   Duration: {exam.duration} hours
                 </p>
-                <button className="bg-customYellow2 text-white py-2 px-4 rounded-md font-medium hover:bg-customYellow transition-transform transform hover:scale-105">
+                <button
+                  className="bg-customYellow2 text-white py-2 px-4 rounded-md font-medium hover:bg-customYellow transition-transform transform hover:scale-105"
+                  onClick={() => navigate(`/examiner/exam/${exam.examHash}`)}
+                >
                   View Details
                 </button>
               </div>

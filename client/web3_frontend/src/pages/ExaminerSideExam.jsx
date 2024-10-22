@@ -499,68 +499,90 @@ const ExaminerSideExam = () => {
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
         {exam.examName ? (
           <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-2 text-customYellow2">Exam Details</h1>
-            <p><strong>Name:</strong> {exam.examName}</p>
-            <p><strong>Start Time:</strong> {exam.startTime}</p>
-            <p><strong>Duration:</strong> {exam.duration}</p>
-            <p><strong>Last Enrollment Date:</strong> {exam.lastEnrollmentDate}</p>
-            <p><strong>Creation Time:</strong> {exam.creationTime}</p>
+            <h1 className="text-2xl font-bold mb-2 text-customYellow2">
+              Exam Details
+            </h1>
+            <p>
+              <strong>Name:</strong> {exam.examName}
+            </p>
+            <p>
+              <strong>Start Time:</strong> {exam.startTime}
+            </p>
+            <p>
+              <strong>Duration:</strong> {exam.duration}
+            </p>
+            <p>
+              <strong>Last Enrollment Date:</strong> {exam.lastEnrollmentDate}
+            </p>
+            <p>
+              <strong>Creation Time:</strong> {exam.creationTime}
+            </p>
           </div>
         ) : (
           <span className="loading loading-spinner loading-lg"></span>
         )}
 
-        <h1 className="text-xl font-bold mb-4 text-customYellow2">Not Verified Students</h1>
+        <h1 className="text-xl font-bold mb-4 text-customYellow2">
+          Not Verified Students
+        </h1>
         <div className="flex flex-wrap justify-center mt-4">
           {students.length > 0 ? (
-            students.filter((student) => !student.isVerified).map((student, index) => (
-              <div className="card bg-white shadow-lg w-100 m-4 rounded-lg border border-gray-200 transition-transform transform hover:scale-105" key={index}>
-                <div className="card-body">
-                  <h2 className="card-title ml-auto mr-auto text-customYellow2 text-lg font-semibold">{student.name}</h2>
-                  <p className="text-gray-600">
-                    <strong>Government Document:</strong>{" "}
-                    <a
-                      className="link link-primary hover:underline"
-                      href={`https://copper-magnificent-kingfisher-423.mypinata.cloud/ipfs/${student.govermentDocument}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View Document
-                    </a>
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Marksheet:</strong>{" "}
-                    <a
-                      className="link link-primary hover:underline"
-                      href={`https://copper-magnificent-kingfisher-423.mypinata.cloud/ipfs/${student.marksheet}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View Marksheet
-                    </a>
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Verified:</strong> {student.isVerified.toString()}
-                  </p>
-                  <div className="card-actions justify-center">
-                    <button
-                      className="btn mt-4 bg-customYellow2"
-                      onClick={() => verifyStudent(student.studentAddress)}
-                    >
-                      Verify
-                    </button>
+            students
+              .filter((student) => !student.isVerified)
+              .map((student, index) => (
+                <div
+                  className="card bg-white shadow-lg w-100 m-4 rounded-lg border border-gray-200 transition-transform transform hover:scale-105"
+                  key={index}
+                >
+                  <div className="card-body">
+                    <h2 className="card-title ml-auto mr-auto text-customYellow2 text-lg font-semibold">
+                      {student.name}
+                    </h2>
+                    <p className="text-gray-600">
+                      <strong>Government Document:</strong>{" "}
+                      <a
+                        className="link link-primary hover:underline"
+                        href={`https://copper-magnificent-kingfisher-423.mypinata.cloud/ipfs/${student.govermentDocument}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View Document
+                      </a>
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Marksheet:</strong>{" "}
+                      <a
+                        className="link link-primary hover:underline"
+                        href={`https://copper-magnificent-kingfisher-423.mypinata.cloud/ipfs/${student.marksheet}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View Marksheet
+                      </a>
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Verified:</strong> {student.isVerified.toString()}
+                    </p>
+                    <div className="card-actions justify-center">
+                      <button
+                        className="btn mt-4 bg-customYellow2"
+                        onClick={() => verifyStudent(student.studentAddress)}
+                      >
+                        Verify
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              ))
           ) : (
             <p className="text-gray-600">No Student Enrollments</p>
           )}
         </div>
 
-
         <div className="mt-10">
-          <h2 className="text-xl font-bold mb-2 text-customYellow2">Add New Verifier</h2>
+          <h2 className="text-xl font-bold mb-2 text-customYellow2">
+            Add New Verifier
+          </h2>
           <div className="flex mb-4">
             <input
               type="text"
@@ -569,17 +591,19 @@ const ExaminerSideExam = () => {
               onChange={(e) => setVerifier(e.target.value)}
               className="input input-bordered flex-grow mr-2"
               placeholder="Enter verifier address"
-              style={{ borderColor: '#F4B92B' }} // customYellow2 for input border
+              style={{ borderColor: "#F4B92B" }} // customYellow2 for input border
             />
             <button
               className="btn"
-              style={{ backgroundColor: '#F4B92B', color: 'white' }}
+              style={{ backgroundColor: "#F4B92B", color: "white" }}
               onClick={addNewVerifier}
             >
               Add Verifier
             </button>
           </div>
-          <h2 className="text-xl font-bold mb-2 text-customYellow2">Remove Verifier</h2>
+          <h2 className="text-xl font-bold mb-2 text-customYellow2">
+            Remove Verifier
+          </h2>
           <div className="flex">
             <input
               type="text"
@@ -588,11 +612,11 @@ const ExaminerSideExam = () => {
               onChange={(e) => setremoveVerifiers(e.target.value)}
               className="input input-bordered flex-grow mr-2"
               placeholder="Enter verifier address"
-              style={{ borderColor: '#F4B92B' }} // customYellow2 for input border
+              style={{ borderColor: "#F4B92B" }} // customYellow2 for input border
             />
             <button
               className="btn"
-              style={{ backgroundColor: '#F4B92B', color: 'white' }}
+              style={{ backgroundColor: "#F4B92B", color: "white" }}
               onClick={removeVerifier}
             >
               Remove Verifier
@@ -602,7 +626,9 @@ const ExaminerSideExam = () => {
 
         {!isExamCreated ? (
           <div className="mb-6 mt-10">
-            <h2 className="text-lg font-bold mb-4 text-customYellow2">Upload CSV Files</h2>
+            <h2 className="text-lg font-bold mb-4 text-customYellow2">
+              Upload CSV Files
+            </h2>
             <div className="space-y-4">
               <div>
                 <h3 className="text-gray-600 mb-2">Questions CSV</h3>
@@ -626,18 +652,24 @@ const ExaminerSideExam = () => {
             <button
               onClick={handleSubmit}
               className="btn"
-              style={{ backgroundColor: '#F4B92B', color: 'white', width: '100%', marginTop: '1rem' }}
+              style={{
+                backgroundColor: "#F4B92B",
+                color: "white",
+                width: "100%",
+                marginTop: "1rem",
+              }}
             >
               Submit Exam
             </button>
           </div>
         ) : (
-          <h1 className="text-lg font-bold text-customYellow2">Exam has been created!</h1>
+          <h1 className="text-lg font-bold text-customYellow2">
+            Exam has been created!
+          </h1>
         )}
       </div>
     </div>
   );
-
 };
 
 export default ExaminerSideExam;
