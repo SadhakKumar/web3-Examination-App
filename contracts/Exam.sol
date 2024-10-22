@@ -21,6 +21,8 @@ contract Exam {
         bool isVerified;
         bool isEnrolled;
         address studentAddress;
+        bool hasExamGiven;
+        uint marks;
     }
     mapping(address => student) public enrolledStudents;
     address[] public enrolledStudentsArray;
@@ -62,7 +64,9 @@ contract Exam {
             _marksheet,
             false,
             true,
-            _address
+            _address,
+            false,
+            0
         );
         enrolledStudents[_address] = newStudent;
         enrolledStudentsArray.push(_address);
@@ -134,5 +138,14 @@ contract Exam {
     // Function to get the exam answers CID
     function getAnswersCID() public view returns (string memory) {
         return answersCID;
+    }
+
+    function gradeStudent(uint marks) public {
+        enrolledStudents[msg.sender].marks = marks;
+        enrolledStudents[msg.sender].hasExamGiven = true;
+    }
+
+    function getStudent() public view returns (student memory) {
+        return enrolledStudents[msg.sender];
     }
 }

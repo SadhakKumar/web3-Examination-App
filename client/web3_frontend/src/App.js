@@ -14,7 +14,7 @@ import ExaminerSideExam from "./pages/ExaminerSideExam";
 import StudentSideExamDetails from "./pages/StudentSideExamDetails";
 import StudentsMyExams from "./pages/StudentsMyExams";
 import StudentExam from "./pages/StudentExam";
-import DummyTest from "./pages/DummyTest"
+import DummyTest from "./pages/DummyTest";
 
 // Rainbowkit imports
 import "@rainbow-me/rainbowkit/styles.css";
@@ -66,7 +66,7 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/eval" element={<DummyTest/>}/>
+              <Route path="/eval" element={<DummyTest />} />
               // Students routes
               <Route path="/student" element={<Outlet />}>
                 <Route path="/student" element={<StudentHome />} />

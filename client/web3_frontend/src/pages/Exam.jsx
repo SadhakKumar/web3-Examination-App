@@ -4,13 +4,21 @@ import { pinata } from "../utils/config";
 import { ethers } from "ethers";
 import Examiner from "../contracts/Examiner.json";
 import { useNavigate } from "react-router-dom";
+import { useAccount } from "wagmi";
 
 const Exam = () => {
   const [exam, setExam] = useState();
   const [contract, setContract] = useState();
   const [exams, setExams] = useState([]);
+  const { isConnected } = useAccount();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isConnected) {
+      navigate("/");
+    }
+  }, [isConnected]);
 
   useEffect(() => {
     console.log("Create Exam Page");

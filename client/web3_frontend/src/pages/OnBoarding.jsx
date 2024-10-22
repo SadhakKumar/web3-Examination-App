@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 import Enrollment from "../contracts/Enrollment.json";
+import { useAccount } from "wagmi";
 
 const OnBoarding = () => {
   const navigate = useNavigate();
   const [contract, setContract] = useState();
+  const { isConnected } = useAccount();
 
   useEffect(() => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -16,6 +18,7 @@ const OnBoarding = () => {
       Enrollment.abi,
       signer
     );
+
     setContract(contractInstance);
   }, []);
 
@@ -30,7 +33,9 @@ const OnBoarding = () => {
         console.error("Error enrolling student:", error);
       }
     } else {
-      alert("MetaMask is not installed. Please install MetaMask and try again.");
+      alert(
+        "MetaMask is not installed. Please install MetaMask and try again."
+      );
     }
   };
 
@@ -45,13 +50,21 @@ const OnBoarding = () => {
         console.error("Error enrolling examiner:", error);
       }
     } else {
-      alert("MetaMask is not installed. Please install MetaMask and try again.");
+      alert(
+        "MetaMask is not installed. Please install MetaMask and try again."
+      );
     }
   };
 
   const nextTick = () => {
-    navigate('/');
+    navigate("/");
   };
+
+  useEffect(() => {
+    if (!isConnected) {
+      navigate("/");
+    }
+  }, [isConnected]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-customYellow3 p-6">
