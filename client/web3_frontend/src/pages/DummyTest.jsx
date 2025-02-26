@@ -3,7 +3,7 @@ import answers from "../TestPaper/answers.json";
 import questions from "../TestPaper/questions.json";
 import { useState } from "react";
 import { ethers } from "ethers";
-import Exam from "../contracts/Exam.json"
+import Exam from "../contracts/Exam.json";
 
 const MCQ = () => {
   const [selectedAnswers, setSelectedAnswers] = useState({});
@@ -20,8 +20,6 @@ const MCQ = () => {
       signer
     );
     setExamContract(ExamContract);
-
-
   }, []);
 
   // Handle user selection

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract Exam {
     address private owner;
@@ -22,7 +23,7 @@ contract Exam {
         bool isEnrolled;
         address studentAddress;
         bool hasExamGiven;
-        uint marks;
+        string encryptedMarks;
     }
     mapping(address => student) public enrolledStudents;
     address[] public enrolledStudentsArray;
@@ -66,7 +67,7 @@ contract Exam {
             true,
             _address,
             false,
-            0
+            "NA"
         );
         enrolledStudents[_address] = newStudent;
         enrolledStudentsArray.push(_address);
@@ -140,8 +141,8 @@ contract Exam {
         return answersCID;
     }
 
-    function gradeStudent(uint marks) public {
-        enrolledStudents[msg.sender].marks = marks;
+    function gradeStudent(string memory marks) public {
+        enrolledStudents[msg.sender].encryptedMarks = marks;
         enrolledStudents[msg.sender].hasExamGiven = true;
     }
 
